@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -31,6 +33,10 @@ public class MainFragment extends Fragment {
     // MainFragment global variables
     CustomAdapter mGridAdapter;
     Toolbar toolbar;
+
+    public MainFragment() {
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,11 @@ public class MainFragment extends Fragment {
 
 
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_main_menu, menu);
     }
 
     /**

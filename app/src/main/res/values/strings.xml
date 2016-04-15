@@ -2,5 +2,5 @@
     <string name="app_name">PopMoviesApp</string>
 
     <!-- Resources for menu items -->
-    <string name="sort_pop">Sort: Popular</string>
+    <string name="settings">Settings</string>
 </resources>

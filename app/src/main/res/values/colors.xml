@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#E91E63</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorBackground">#CFD8DC</color>
+    <!-- AppTheme color scheme -->
+    <color name="colorPrimary">#673AB7</color>
+    <color name="colorPrimaryDark">#512DA8</color>
+    <color name="colorAccent">#B388FF</color>
+    <color name="colorBackground">#7986CB</color>
+
+    <!-- Toolbar color scheme -->
+    <color name="colorToolbarPrimaryText">#E8EBE4</color>
 </resources>
