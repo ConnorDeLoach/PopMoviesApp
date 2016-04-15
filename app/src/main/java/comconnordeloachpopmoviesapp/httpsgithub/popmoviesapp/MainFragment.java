@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ public class MainFragment extends Fragment {
 
     // MainFragment global variables
     CustomAdapter mGridAdapter;
+    Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,10 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main_layout, container, false);
+
+        //Create toolbar
+        toolbar = (Toolbar)root.findViewById(R.id.app_bar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         // Create CustomAdapter connected to singlegrid imageview layout and moviePosterPaths data
         mGridAdapter = new CustomAdapter(getActivity(), R.layout.single_gridview, R.id.image_view);

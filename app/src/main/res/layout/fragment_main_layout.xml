@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grid_view"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#CFD8DC"
-    android:columnWidth="90dp"
-    android:gravity="center"
-    android:horizontalSpacing="10dp"
-    android:numColumns="auto_fit"
-    android:stretchMode="columnWidth"
-    android:verticalSpacing="10dp">
+    android:layout_height="match_parent">
 
-</GridView>
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar" />
+
+    <GridView
+        android:id="@+id/grid_view"
+        android:layout_below="@id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        android:columnWidth="90dp"
+        android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="10dp" />
+
+</RelativeLayout>
