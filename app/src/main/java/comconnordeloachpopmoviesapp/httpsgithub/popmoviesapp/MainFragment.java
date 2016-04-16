@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,14 +69,27 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate actions menu
+        menu.clear();
         inflater.inflate(R.menu.fragment_main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        //Setting action
+        if (itemId == R.id.action_settings) {
+            Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
      * Method that takes the JSON String from AsyncTask and extracts movie poster paths
      *
      * @param jsonString from MyAsyncTask
-     * @return String[] of movie poster paths
      * @throws JSONException
      */
     private void getImageDataFromJson(String jsonString)
