@@ -5,22 +5,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
 
-    final String MAINFRAGMENTTAG = MainFragment.class.toString();
+    final String DETAILSFRAGMENTTAG = DetailsFragment.class.toString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_details);
 
         // Create Fragment manager begin a transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         // Instantiate MainFragment and attach it to activity_main layout
-        MainFragment mainFragment = new MainFragment();
-        fragmentTransaction.add(R.id.fragment_container, mainFragment, MAINFRAGMENTTAG);
+        DetailsFragment detailsFragment = new DetailsFragment();
+        fragmentTransaction.add(R.id.details_fragment_container, detailsFragment, DETAILSFRAGMENTTAG);
         fragmentTransaction.commit();
     }
 }

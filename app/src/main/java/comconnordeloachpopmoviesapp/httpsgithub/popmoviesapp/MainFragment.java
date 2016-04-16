@@ -1,5 +1,6 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -34,8 +36,8 @@ public class MainFragment extends Fragment {
 
     // MainFragment global variables
     CustomAdapter mGridAdapter;
-    Toolbar toolbar;
     Boolean topRated = false;
+    String jsonString;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -55,7 +57,7 @@ public class MainFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_main_layout, container, false);
 
         //Create toolbar
-        toolbar = (Toolbar)root.findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         // Create CustomAdapter connected to singlegrid imageview layout and moviePosterPaths data
@@ -63,7 +65,22 @@ public class MainFragment extends Fragment {
         GridView gridView = (GridView) root.findViewById(R.id.grid_view);
         // Attach CustomAdapter to MainFragment's layout
         gridView.setAdapter(mGridAdapter);
+        // Set onClickListener to launch details fragment when a movie poster is touched
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    String title = getDetailsActivity(position);
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, title);
+                    startActivity(intent);
 
+                } catch (JSONException exc) {
+                    Log.e(MainFragment.class.toString(), exc.getMessage(), exc);
+                    exc.printStackTrace();
+                }
+            }
+        });
 
         return root;
     }
@@ -108,6 +125,19 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    private String getDetailsActivity(int position)
+            throws JSONException {
+        // Name of JSON Objects and arrays
+        final String RESULTS = "results";
+        final String TITLE = "title";
+
+        // Construct JSON object and extract movie data
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
+        JSONObject movie = moviesArray.getJSONObject(position);
+        return movie.getString(TITLE);
+    }
+
     /**
      * Method that takes the JSON String from AsyncTask and extracts movie poster paths
      *
@@ -116,7 +146,7 @@ public class MainFragment extends Fragment {
      */
     private void getImageDataFromJson(String jsonString)
             throws JSONException {
-        // Names of JSON objects
+        // Names of JSON objects and arrays
         final String RESULTS = "results";
         final String MOVIEPOSTER = "poster_path";
 
@@ -164,7 +194,6 @@ public class MainFragment extends Fragment {
             // Variable declarations outside try block in order to close in Final block
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            String jsonString;
             try {
                 // Create a URL from the built Uri string above and open a connection to MoviesDB
                 URL url = new URL(builtUri.toString());
