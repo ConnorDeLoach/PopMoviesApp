@@ -35,6 +35,7 @@ public class MainFragment extends Fragment {
     // MainFragment global variables
     CustomAdapter mGridAdapter;
     Toolbar toolbar;
+    Boolean topRated = false;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -45,7 +46,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Run MyAsyncClass to fetch movie poster paths
         MyAsyncClass fetchMoviePosters = new MyAsyncClass();
-        fetchMoviePosters.execute();
+        fetchMoviePosters.execute("popular");
 
     }
 
@@ -69,9 +70,14 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate actions menu
+        // Clear current menu
         menu.clear();
-        inflater.inflate(R.menu.fragment_main_menu, menu);
+        // Inflate popular or top-rated menu
+        if (topRated) {
+            inflater.inflate(R.menu.mainfragment_toprated_menu, menu);
+        } else {
+            inflater.inflate(R.menu.mainfragment_popular_menu, menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -79,9 +85,25 @@ public class MainFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        //Setting action
-        if (itemId == R.id.action_settings) {
-            Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
+        //Setting action logic
+        switch (itemId) {
+            case R.id.action_settings:
+                Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_top_sort:
+                MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
+                fetchTopMoviePosters.execute("top_rated");
+                topRated = true;
+                // Reset options menu
+                getActivity().invalidateOptionsMenu();
+                break;
+            case R.id.action_pop_sort:
+                MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
+                fetchPopMoviePosters.execute("popular");
+                // Reset options menu
+                topRated = false;
+                getActivity().invalidateOptionsMenu();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -113,15 +135,29 @@ public class MainFragment extends Fragment {
         }
     }
 
-    class MyAsyncClass extends AsyncTask<Void, Void, String> {
+    class MyAsyncClass extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(String... params) {
 
+            final String TOP_RATED_BASEURL = "http://api.themoviedb.org/3/movie/top_rated";
             final String POPULAR_MOVIE_BASEURL = "http://api.themoviedb.org/3/movie/popular?";
             final String APPID_PARAM = "api_key";
 
-            Uri builtUri = Uri.parse(POPULAR_MOVIE_BASEURL).buildUpon()
+            //Assign MyAsyncTask params to top_rated URL or popular URL
+            switch (params[0]) {
+                case "popular":
+                    params[0] = POPULAR_MOVIE_BASEURL;
+                    break;
+                case "top_rated":
+                    params[0] = TOP_RATED_BASEURL;
+                    break;
+                default:
+                    Log.e(MyAsyncClass.class.toString(), "Invalid params");
+                    return null;
+            }
+
+            Uri builtUri = Uri.parse(params[0]).buildUpon()
                     .appendQueryParameter(APPID_PARAM, "YOUR_API_KEY")
                     .build();
 
