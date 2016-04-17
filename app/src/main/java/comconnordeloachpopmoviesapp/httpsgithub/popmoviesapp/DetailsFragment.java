@@ -21,6 +21,8 @@ import org.json.JSONObject;
  */
 public class DetailsFragment extends android.support.v4.app.Fragment {
 
+    final String BASEURL = "http://image.tmdb.org/t/p/w342/";
+
     public DetailsFragment() {
         setHasOptionsMenu(true);
     }
@@ -40,41 +42,24 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
 
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
-        textView.setText(getMovieTitle());
+        textView.setText(getData("title"));
 
         // Attach movie poster
         ImageView imageView = (ImageView) root.findViewById(R.id.details_image_view);
-        Picasso.with(getActivity()).load(getMoviePoster()).into(imageView);
+        Picasso.with(getActivity()).load(BASEURL + getData("poster_path")).into(imageView);
         return root;
     }
 
-    private String getMovieTitle() {
+    private String getData(String param) {
         // Create JSON movie object from intent
-        String title = null;
+        String data;
         try {
             JSONObject movie = new JSONObject(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
-            // Fetch movie title
-            title = movie.getString("title");
+            return movie.getString(param);
         } catch (JSONException exc) {
             Log.e(DetailsFragment.class.toString(), exc.getMessage(), exc);
             exc.printStackTrace();
         }
-        return title;
-    }
-
-    private String getMoviePoster() {
-        // Create JSON movie object from intent
-        final String BASEURL = "http://image.tmdb.org/t/p/w342/";
-        String posterPath = null;
-        try {
-            JSONObject movie = new JSONObject(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
-            // Fetch movie title
-            posterPath = movie.getString("poster_path");
-
-        } catch (JSONException exc) {
-            Log.e(DetailsFragment.class.toString(), exc.getMessage(), exc);
-            exc.printStackTrace();
-        }
-        return BASEURL + posterPath;
+        return null;
     }
 }
