@@ -47,6 +47,18 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         // Attach movie poster
         ImageView imageView = (ImageView) root.findViewById(R.id.details_image_view);
         Picasso.with(getActivity()).load(BASEURL + getData("poster_path")).into(imageView);
+
+        // Attach movie release date
+        TextView releaseDate = (TextView) root.findViewById(R.id.details_release_date);
+        releaseDate.setText(getData("release_date"));
+
+        // Attach rating
+        TextView rating = (TextView) root.findViewById(R.id.details_rating);
+        rating.setText(getData("vote_average"));
+
+        // Attach movie synopsis
+        TextView synopsis = (TextView) root.findViewById(R.id.details_synopsis);
+        synopsis.setText(getData("overview"));
         return root;
     }
 

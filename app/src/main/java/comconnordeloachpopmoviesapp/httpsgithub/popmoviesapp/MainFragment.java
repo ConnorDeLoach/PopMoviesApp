@@ -125,11 +125,17 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method to package specific movie JSON object when a movie poster to touched
+     *
+     * @param position of view in gridView
+     * @return String representation of JSON object
+     * @throws JSONException
+     */
     private String getDetailsActivity(int position)
             throws JSONException {
         // Name of JSON Objects and arrays
         final String RESULTS = "results";
-        final String TITLE = "title";
 
         // Construct JSON object and extract movie JSON object (as String)
         JSONObject jsonObject = new JSONObject(jsonString);
