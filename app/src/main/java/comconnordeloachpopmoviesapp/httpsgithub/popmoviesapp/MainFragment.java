@@ -70,9 +70,9 @@ public class MainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    String title = getDetailsActivity(position);
+                    String movie = getDetailsActivity(position);
                     Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                    intent.putExtra(Intent.EXTRA_TEXT, title);
+                    intent.putExtra(Intent.EXTRA_TEXT, movie);
                     startActivity(intent);
 
                 } catch (JSONException exc) {
@@ -131,11 +131,10 @@ public class MainFragment extends Fragment {
         final String RESULTS = "results";
         final String TITLE = "title";
 
-        // Construct JSON object and extract movie data
+        // Construct JSON object and extract movie JSON object (as String)
         JSONObject jsonObject = new JSONObject(jsonString);
         JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
-        JSONObject movie = moviesArray.getJSONObject(position);
-        return movie.getString(TITLE);
+        return moviesArray.getJSONObject(position).toString();
     }
 
     /**
