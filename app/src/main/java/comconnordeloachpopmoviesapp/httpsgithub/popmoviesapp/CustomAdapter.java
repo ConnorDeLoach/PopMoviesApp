@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
  */
 public class CustomAdapter extends ArrayAdapter<String> {
 
-    final String BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    final String BASE_URL = "http://image.tmdb.org/t/p/w500/";
     Context context;
 
     public CustomAdapter(Context context, int resource, int imageViewResourceId) {
