@@ -24,15 +24,25 @@ public class CustomAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Inflate the imageView that will hold each movie poster
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View grid = inflater.inflate(R.layout.single_gridview, parent, false);
-        ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
+        if (convertView == null) {
+            // Inflate the imageView that will hold each movie poster
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View grid = inflater.inflate(R.layout.single_gridview, parent, false);
+            ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
 
-        // Picasso fetch movie posters and place them into imageview
-        Picasso.with(context).load(BASE_URL + getItem(position)).into(imageView);
-
-        // Return image
-        return imageView;
+            // Picasso fetch movie posters and place them into imageview
+            Picasso.with(context).load(BASE_URL + getItem(position)).into(imageView);
+            imageView.setTag("pop");
+            return imageView;
+            // Use the static variable popOrTop in MainFragment to determine if dataset changed
+        } else if (MainFragment.popOrTop == convertView.getTag()) {
+            // if data has not changed, recycle the same view
+            return convertView;
+        } else {
+            // The dataset has changed, no need to reinflate the view, just use picasso to put new data into convertView
+            Picasso.with(context).load(BASE_URL + getItem(position)).into((ImageView) convertView);
+            convertView.setTag(MainFragment.popOrTop);
+            return convertView;
+        }
     }
 }

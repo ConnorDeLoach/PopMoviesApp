@@ -33,11 +33,12 @@ import java.net.URL;
  * Created by connor on 4/11/16.
  */
 public class MainFragment extends Fragment {
-
-    // MainFragment global variables
-    CustomAdapter mGridAdapter;
-    Boolean topRated = false;
-    String jsonString;
+    // Global variables
+    public static String popOrTop = "pop"; // Tracks whether mGridAdapter's children are pop or top
+    // MainFragment variables
+    private CustomAdapter mGridAdapter;
+    private Boolean topRated = false; // Variable controlling which options menu to inflate
+    private String jsonString;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -110,13 +111,15 @@ public class MainFragment extends Fragment {
             case R.id.action_top_sort:
                 MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
                 fetchTopMoviePosters.execute("top_rated");
-                topRated = true;
+                popOrTop = "top";
                 // Reset options menu
+                topRated = true;
                 getActivity().invalidateOptionsMenu();
                 break;
             case R.id.action_pop_sort:
                 MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
                 fetchPopMoviePosters.execute("popular");
+                popOrTop = "pop";
                 // Reset options menu
                 topRated = false;
                 getActivity().invalidateOptionsMenu();
