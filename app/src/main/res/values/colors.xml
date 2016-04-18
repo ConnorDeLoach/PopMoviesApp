@@ -2,9 +2,10 @@
 <resources>
     <!-- AppTheme color scheme -->
     <color name="colorPrimary">#00BCD4</color>
-    <color name="colorPrimaryDark">#512DA8</color>
+    <color name="colorPrimaryDark">#673AB7</color>
     <color name="colorAccent">#B388FF</color>
     <color name="colorBackground">#F5F5F5</color>
+    <color name="colorPrimaryText">#212121</color>
 
     <!-- Toolbar color scheme -->
     <color name="colorToolbarPrimaryText">#E8EBE4</color>

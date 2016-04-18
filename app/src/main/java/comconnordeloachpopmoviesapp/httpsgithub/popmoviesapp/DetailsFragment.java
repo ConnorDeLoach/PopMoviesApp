@@ -43,6 +43,8 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         // Create toolbar
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        // Enable home navigation
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
