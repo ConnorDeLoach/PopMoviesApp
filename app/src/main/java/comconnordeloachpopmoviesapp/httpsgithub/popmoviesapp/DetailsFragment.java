@@ -16,6 +16,10 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 /**
  * Created by connor on 4/16/16.
  */
@@ -49,12 +53,17 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         Picasso.with(getActivity()).load(BASEURL + getData("poster_path")).into(imageView);
 
         // Attach movie release date
-        TextView releaseDate = (TextView) root.findViewById(R.id.details_release_date);
-        releaseDate.setText(getData("release_date"));
-
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.US);
+        try {
+            String date = formatter.format(formatter.parse(getData("release_date")));
+            TextView releaseDate = (TextView) root.findViewById(R.id.details_release_date);
+            releaseDate.setText(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         // Attach rating
         TextView rating = (TextView) root.findViewById(R.id.details_rating);
-        rating.setText(getData("vote_average"));
+        rating.setText(getData("vote_average") + "/10");
 
         // Attach movie synopsis
         TextView synopsis = (TextView) root.findViewById(R.id.details_synopsis);
