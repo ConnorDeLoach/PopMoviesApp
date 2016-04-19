@@ -6,10 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -41,9 +45,9 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         View root = inflater.inflate(R.layout.fragment_details, container, false);
 
         // Create toolbar
-        Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        // Enable home navigation
+        // Enable home navigation button
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Attach movie title
@@ -71,6 +75,27 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         TextView synopsis = (TextView) root.findViewById(R.id.details_synopsis);
         synopsis.setText(getData("overview"));
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate options menu
+        menu.clear();
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        //Setup action logic
+        switch (itemId) {
+            case R.id.action_settings:
+                Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private String getData(String param) {

@@ -5,7 +5,7 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/app_bar" />
+        layout="@layout/mainfragment_toolbar" />
 
     <GridView
         android:id="@+id/grid_view"

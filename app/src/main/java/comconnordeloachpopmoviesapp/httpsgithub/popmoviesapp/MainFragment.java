@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -33,24 +34,16 @@ import java.net.URL;
  * Created by connor on 4/11/16.
  */
 public class MainFragment extends Fragment {
+
     // Global variables
-    public static String popOrTop = "pop"; // Tracks whether mGridAdapter's children are pop or top
+    public static String popOrTop; // Tracks whether mGridAdapter's children are pop or top
+
     // MainFragment variables
     private CustomAdapter mGridAdapter;
-    private Boolean topRated = false; // Variable controlling which options menu to inflate
     private String jsonString;
 
     public MainFragment() {
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // Run MyAsyncClass to fetch movie poster paths
-        MyAsyncClass fetchMoviePosters = new MyAsyncClass();
-        fetchMoviePosters.execute("popular");
-
     }
 
     @Override
@@ -61,11 +54,38 @@ public class MainFragment extends Fragment {
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
+        // Create Spinner actions: sort by popular, or by top rated
+        Spinner spinner = (Spinner) root.findViewById(R.id.spinner_menu);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
+                        popOrTop = "pop";
+                        fetchPopMoviePosters.execute("popular");
+                        break;
+                    case 1:
+                        MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
+                        popOrTop = "top";
+                        fetchTopMoviePosters.execute("top_rated");
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         // Create CustomAdapter connected to singlegrid imageview layout and moviePosterPaths data
         mGridAdapter = new CustomAdapter(getActivity(), R.layout.single_gridview, R.id.image_view);
         GridView gridView = (GridView) root.findViewById(R.id.grid_view);
+
         // Attach CustomAdapter to MainFragment's layout
         gridView.setAdapter(mGridAdapter);
+
         // Set onClickListener to launch details fragment when a movie poster is touched
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -88,14 +108,8 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Clear current menu
         menu.clear();
-        // Inflate popular or top-rated menu
-        if (topRated) {
-            inflater.inflate(R.menu.mainfragment_toprated_menu, menu);
-        } else {
-            inflater.inflate(R.menu.mainfragment_popular_menu, menu);
-        }
+        inflater.inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -107,22 +121,6 @@ public class MainFragment extends Fragment {
         switch (itemId) {
             case R.id.action_settings:
                 Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.action_top_sort:
-                MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
-                fetchTopMoviePosters.execute("top_rated");
-                popOrTop = "top";
-                // Reset options menu
-                topRated = true;
-                getActivity().invalidateOptionsMenu();
-                break;
-            case R.id.action_pop_sort:
-                MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
-                fetchPopMoviePosters.execute("popular");
-                popOrTop = "pop";
-                // Reset options menu
-                topRated = false;
-                getActivity().invalidateOptionsMenu();
                 break;
         }
         return super.onOptionsItemSelected(item);
