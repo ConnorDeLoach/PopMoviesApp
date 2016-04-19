@@ -14,12 +14,21 @@ import com.squareup.picasso.Picasso;
  */
 public class CustomAdapter extends ArrayAdapter<String> {
 
+    private static String popOrTop;
     final String BASE_URL = "http://image.tmdb.org/t/p/w500/";
     Context context;
 
     public CustomAdapter(Context context, int resource, int imageViewResourceId) {
         super(context, resource, imageViewResourceId);
         this.context = context;
+    }
+
+    public static void setPop() {
+        popOrTop = "pop";
+    }
+
+    public static void setTop() {
+        popOrTop = "top";
     }
 
     @Override
@@ -35,13 +44,13 @@ public class CustomAdapter extends ArrayAdapter<String> {
             imageView.setTag("pop");
             return imageView;
             // Use the static variable popOrTop in MainFragment to determine if dataset changed
-        } else if (MainFragment.popOrTop == convertView.getTag()) {
+        } else if (popOrTop == convertView.getTag()) {
             // if data has not changed, recycle the same view
             return convertView;
         } else {
             // The dataset has changed, no need to reinflate the view, just use picasso to put new data into convertView
             Picasso.with(context).load(BASE_URL + getItem(position)).into((ImageView) convertView);
-            convertView.setTag(MainFragment.popOrTop);
+            convertView.setTag(popOrTop);
             return convertView;
         }
     }

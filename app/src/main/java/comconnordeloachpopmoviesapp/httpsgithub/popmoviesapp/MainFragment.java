@@ -35,9 +35,6 @@ import java.net.URL;
  */
 public class MainFragment extends Fragment {
 
-    // Global variables
-    public static String popOrTop; // Tracks whether mGridAdapter's children are pop or top
-
     // MainFragment variables
     private CustomAdapter mGridAdapter;
     private String jsonString;
@@ -62,12 +59,12 @@ public class MainFragment extends Fragment {
                 switch (position) {
                     case 0:
                         MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
-                        popOrTop = "pop";
+                        CustomAdapter.setPop();
                         fetchPopMoviePosters.execute("popular");
                         break;
                     case 1:
                         MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
-                        popOrTop = "top";
+                        CustomAdapter.setTop();
                         fetchTopMoviePosters.execute("top_rated");
                         break;
                 }
