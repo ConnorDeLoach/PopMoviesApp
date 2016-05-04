@@ -37,7 +37,7 @@ public class MainFragment extends Fragment {
 
     // MainFragment variables
     private CustomAdapter mGridAdapter;
-    private String jsonString;
+    private String jsonString = null;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -174,7 +174,7 @@ public class MainFragment extends Fragment {
         protected String doInBackground(String... params) {
 
             final String TOP_RATED_BASEURL = "http://api.themoviedb.org/3/movie/top_rated";
-            final String POPULAR_MOVIE_BASEURL = "http://api.themoviedb.org/3/movie/popular?";
+            final String POPULAR_MOVIE_BASEURL = "http://api.themoviedb.org/3/movie/popular";
             final String APPID_PARAM = "api_key";
 
             //Assign MyAsyncTask params to top_rated URL or popular URL
@@ -241,6 +241,11 @@ public class MainFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String jsonString) {
+            // Catch null returns
+            if(jsonString == null) {
+                Log.e(MyAsyncClass.class.toString(), "jsonString failed to retrieve data");
+                return;
+            }
             // Execute getImageDataFromJson task
             try {
                 getImageDataFromJson(jsonString);

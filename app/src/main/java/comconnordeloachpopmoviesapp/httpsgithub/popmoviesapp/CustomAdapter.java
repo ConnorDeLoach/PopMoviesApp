@@ -44,7 +44,7 @@ public class CustomAdapter extends ArrayAdapter<String> {
             imageView.setTag("pop");
             return imageView;
             // Use the static variable popOrTop in MainFragment to determine if dataset changed
-        } else if (popOrTop == convertView.getTag()) {
+        } else if (popOrTop.equals(convertView.getTag())) {
             // if data has not changed, recycle the same view
             return convertView;
         } else {
