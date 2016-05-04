@@ -59,12 +59,10 @@ public class MainFragment extends Fragment {
                 switch (position) {
                     case 0:
                         MyAsyncClass fetchPopMoviePosters = new MyAsyncClass();
-                        CustomAdapter.setPop();
                         fetchPopMoviePosters.execute("popular");
                         break;
                     case 1:
                         MyAsyncClass fetchTopMoviePosters = new MyAsyncClass();
-                        CustomAdapter.setTop();
                         fetchTopMoviePosters.execute("top_rated");
                         break;
                 }

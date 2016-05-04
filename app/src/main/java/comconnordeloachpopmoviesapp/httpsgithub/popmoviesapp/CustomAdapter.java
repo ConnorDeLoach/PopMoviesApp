@@ -14,7 +14,6 @@ import com.squareup.picasso.Picasso;
  */
 public class CustomAdapter extends ArrayAdapter<String> {
 
-    private static String popOrTop;
     final String BASE_URL = "http://image.tmdb.org/t/p/w500/";
     Context context;
 
@@ -23,35 +22,15 @@ public class CustomAdapter extends ArrayAdapter<String> {
         this.context = context;
     }
 
-    public static void setPop() {
-        popOrTop = "pop";
-    }
-
-    public static void setTop() {
-        popOrTop = "top";
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            // Inflate the imageView that will hold each movie poster
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View grid = inflater.inflate(R.layout.single_gridview, parent, false);
-            ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
+        // Inflate the imageView that will hold each movie poster
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View grid = inflater.inflate(R.layout.single_gridview, parent, false);
+        ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
 
-            // Picasso fetch movie posters and place them into imageview
-            Picasso.with(context).load(BASE_URL + getItem(position)).into(imageView);
-            imageView.setTag("pop");
-            return imageView;
-            // Use the static variable popOrTop in MainFragment to determine if dataset changed
-        } else if (popOrTop.equals(convertView.getTag())) {
-            // if data has not changed, recycle the same view
-            return convertView;
-        } else {
-            // The dataset has changed, no need to reinflate the view, just use picasso to put new data into convertView
-            Picasso.with(context).load(BASE_URL + getItem(position)).into((ImageView) convertView);
-            convertView.setTag(popOrTop);
-            return convertView;
-        }
+        // Picasso fetch movie posters and place them into imageview
+        Picasso.with(context).load(BASE_URL + getItem(position)).into(imageView);
+        return imageView;
     }
 }
