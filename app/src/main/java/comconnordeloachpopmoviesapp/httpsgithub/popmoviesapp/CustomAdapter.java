@@ -24,13 +24,19 @@ public class CustomAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Inflate the imageView that will hold each movie poster
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View grid = inflater.inflate(R.layout.single_gridview, parent, false);
-        ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
+        if (convertView == null) {
+            // Inflate the imageView that will hold each movie poster
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View grid = inflater.inflate(R.layout.single_gridview, parent, false);
+            ImageView imageView = (ImageView) grid.findViewById(R.id.image_view);
 
-        // Picasso fetch movie posters and place them into imageview
-        Picasso.with(context).load(BASE_URL + getItem(position)).into(imageView);
-        return imageView;
+            // Picasso fetch movie posters and place them into imageview
+            Picasso.with(context).load(BASE_URL + getItem(position)).placeholder(android.R.mipmap.sym_def_app_icon).error(android.R.mipmap.sym_def_app_icon).into(imageView);
+            return imageView;
+        } else {
+            // Picasso fetch movie posters and place them into convertView
+            Picasso.with(context).load(BASE_URL + getItem(position)).placeholder(android.R.mipmap.sym_def_app_icon).error(android.R.mipmap.sym_def_app_icon).into((ImageView) convertView);
+            return convertView;
+        }
     }
 }
