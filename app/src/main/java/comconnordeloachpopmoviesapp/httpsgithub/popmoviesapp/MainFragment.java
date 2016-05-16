@@ -122,7 +122,7 @@ public class MainFragment extends Fragment {
     }
 
     /**
-     * Method to package specific movie JSON object when a movie poster to touched
+     * Method to package specific movie JSON object when a movie poster is touched
      *
      * @param position of view in gridView
      * @return String representation of JSON object

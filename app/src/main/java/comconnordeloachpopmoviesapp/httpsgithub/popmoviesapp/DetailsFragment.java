@@ -53,6 +53,14 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
         textView.setText(getData("title"));
+        // Insert Title into SQLite db
+        DBAdapter db = new DBAdapter(getActivity());
+        long id = db.insertData(getData("title"));
+        if (id < 0) {
+            Log.e(DetailsFragment.class.toString(), "SQLite Title insert failed");
+        } else {
+            Toast.makeText(getActivity(), "Succesfully inserted poster title", Toast.LENGTH_SHORT).show();
+        }
 
         // Attach movie poster
         ImageView imageView = (ImageView) root.findViewById(R.id.details_image_view);
