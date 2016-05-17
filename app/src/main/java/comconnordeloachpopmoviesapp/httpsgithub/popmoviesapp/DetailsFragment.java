@@ -55,21 +55,19 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Hello from favorites", Toast.LENGTH_SHORT).show();
+                DBAdapter db = new DBAdapter(getActivity());
+                long id = db.insertData(getData("id"));
+                if (id < 0) {
+                    Log.e(DetailsFragment.class.toString(), "SQLite id insert failed");
+                } else {
+                    Toast.makeText(getActivity(), "Succesfully inserted movie is", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
         textView.setText(getData("title"));
-        // Insert Title into SQLite db
-        DBAdapter db = new DBAdapter(getActivity());
-        long id = db.insertData(getData("title"));
-        if (id < 0) {
-            Log.e(DetailsFragment.class.toString(), "SQLite Title insert failed");
-        } else {
-            Toast.makeText(getActivity(), "Succesfully inserted poster title", Toast.LENGTH_SHORT).show();
-        }
 
         // Attach movie poster
         ImageView imageView = (ImageView) root.findViewById(R.id.details_image_view);
@@ -117,7 +115,6 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
 
     private String getData(String param) {
         // Create JSON movie object from intent
-        String data;
         try {
             JSONObject movie = new JSONObject(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
             return movie.getString(param);

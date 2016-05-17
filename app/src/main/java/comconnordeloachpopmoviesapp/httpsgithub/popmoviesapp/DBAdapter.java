@@ -19,10 +19,10 @@ public class DBAdapter {
         helper = new DBOpenHelper(context);
     }
 
-    public long insertData(String data) {
+    public long insertData(String uid) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBOpenHelper.TITLE, data);
+        contentValues.put(DBOpenHelper.UID, uid);
         long id = db.insert(DBOpenHelper.TABLE_NAME, null, contentValues);
         return id;
     }
@@ -31,10 +31,9 @@ public class DBAdapter {
 
         private static final String DATABASE_NAME = "PopMoviesAppDB";
         private static final String TABLE_NAME = "APPDATA";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 3;
         private static final String UID = "_id";
-        private static final String TITLE = "Title";
-        private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE + " VARCHAR(255));";
+        private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + UID + " INTEGER PRIMARY KEY NOT NULL);";
         private static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
         public DBOpenHelper(Context context) {
