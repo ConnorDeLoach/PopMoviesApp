@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,14 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         // Enable home navigation button
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Setup favorites logic
+        CheckBox checkBox = (CheckBox) root.findViewById(R.id.star);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Hello from favorites", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
