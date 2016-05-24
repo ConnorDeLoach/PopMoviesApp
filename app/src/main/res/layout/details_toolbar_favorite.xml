@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/details_toolbar"
+    android:id="@+id/details_toolbar_favorite"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimaryDark"
     app:theme="@style/MyCustomToolBarTheme">
 
     <CheckBox
-        android:id="@+id/favorite_border"
+        android:id="@+id/favorite_filled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:button="@+drawable/ic_favorite_border_white_24dp" />
+        android:button="@+drawable/ic_favorite_white_24dp" />
 
 </android.support.v7.widget.Toolbar>

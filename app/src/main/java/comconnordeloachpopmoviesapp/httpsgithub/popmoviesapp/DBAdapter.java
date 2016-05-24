@@ -2,6 +2,7 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -19,25 +20,32 @@ public class DBAdapter {
         helper = new DBOpenHelper(context);
     }
 
-    public long insertData(String uid) {
+    public long insertData(String column, String data) {
+        // Retrieve SQLite database
         SQLiteDatabase db = helper.getWritableDatabase();
+
+        // Create the set of values to insert into database
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DBOpenHelper.UID, uid);
-        long id = db.insert(DBOpenHelper.TABLE_NAME, null, contentValues);
-        return id;
+        contentValues.put(column, data);
+
+        // Insert value-pair into database
+        return db.insert(DBContract.TABLE_NAME, null, contentValues);
+    }
+
+    public Cursor queryData(String uid, String[] column) {
+        // Retrieve SQLite database
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        // Query the database
+        return db.query(DBContract.TABLE_NAME, column, uid, null, null, null, null);
     }
 
     class DBOpenHelper extends SQLiteOpenHelper {
 
-        private static final String DATABASE_NAME = "PopMoviesAppDB";
-        private static final String TABLE_NAME = "APPDATA";
-        private static final int DATABASE_VERSION = 3;
-        private static final String UID = "_id";
-        private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + UID + " INTEGER PRIMARY KEY NOT NULL);";
-        private static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
 
         public DBOpenHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            super(context, DBContract.DATABASE_NAME, null, DBContract.DATABASE_VERSION);
         }
 
         @Override
@@ -45,7 +53,7 @@ public class DBAdapter {
         public void onCreate(SQLiteDatabase db) {
 
             try {
-                db.execSQL(CREATE_TABLE);
+                db.execSQL(DBContract.CREATE_TABLE);
             } catch (SQLException exc) {
                 Log.e(DBAdapter.class.toString(), "CREATE_TABLE failed");
                 exc.printStackTrace();
@@ -58,7 +66,7 @@ public class DBAdapter {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
             try {
-                db.execSQL(DROP_TABLE);
+                db.execSQL(DBContract.DROP_TABLE);
                 onCreate(db);
             } catch (SQLException exc) {
                 Log.e(DBAdapter.class.toString(), "DROP TABLE failed");

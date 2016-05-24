@@ -1,6 +1,7 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,25 +46,51 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_details, container, false);
 
-        // Create toolbar
-        Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        // Enable home navigation button
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // Setup favorites logic
-        CheckBox checkBox = (CheckBox) root.findViewById(R.id.star);
+        DBAdapter dbAdapter = new DBAdapter(getActivity());
+        String[] isFavorite = {DBContract.FAVORITES};
+        Cursor cursor = dbAdapter.queryData("_id=" + getData("id"), isFavorite);
+
+        // Check to see if movie is favorite or not
+        if (cursor.getCount() != 1) {
+            Log.e(DetailsFragment.class.getSimpleName(), "Did not retrieve exactly 1 row during favorites query");
+            cursor.close();
+        } else {
+            // Move cursor to column
+            cursor.moveToFirst();
+
+            // Load correct toolbar depending on whether movie is favorited or not
+            if (cursor.getInt(0) == 0) {
+                // Create toolbar
+                Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar);
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+                // Enable home navigation button
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_border);
+            } else {
+                // Create toolbar
+                Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar_favorite);
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+                // Enable home navigation button
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_filled);
+            }
+        }
+
+
+        /* CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_border);
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DBAdapter db = new DBAdapter(getActivity());
                 long id = db.insertData(getData("id"));
-                if (id < 0) {
+                if (id == 0) {
                     Log.e(DetailsFragment.class.toString(), "SQLite id insert failed");
                 } else {
                     Toast.makeText(getActivity(), "Succesfully inserted movie is", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
 
         // Attach movie title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);

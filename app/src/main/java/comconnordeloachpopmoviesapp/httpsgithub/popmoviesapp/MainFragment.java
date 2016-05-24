@@ -241,7 +241,7 @@ public class MainFragment extends Fragment {
         protected void onPostExecute(String jsonString) {
             // Catch null returns
             if(jsonString == null) {
-                Log.e(MyAsyncClass.class.toString(), "jsonString failed to retrieve data");
+                Log.e(MyAsyncClass.class.toString(), "AsyncTask failed to retrieve data");
                 return;
             }
             // Execute getImageDataFromJson task
@@ -251,6 +251,23 @@ public class MainFragment extends Fragment {
                 mGridAdapter.notifyDataSetChanged();
             } catch (JSONException exc) {
                 Log.e(MyAsyncClass.class.toString(), exc.getMessage(), exc);
+            }
+            // Insert Data into SQLite DB
+            try {
+                // Initialize SQLite database
+                DBAdapter dbAdapter = new DBAdapter(getActivity());
+
+                // Construct JSON object and extract movies array
+                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONArray moviesArray = jsonObject.getJSONArray("results");
+
+                // Iterate through moviesArray and store the movies' id into database
+                for (int i = 0; i < moviesArray.length(); i++) {
+                    JSONObject movie = moviesArray.getJSONObject(i);
+                    dbAdapter.insertData(DBContract.UID, movie.getString("id"));
+                }
+            } catch (JSONException exc) {
+                Log.e(MyAsyncClass.class.toString(), "Failed to insert data into database");
             }
         }
     }
