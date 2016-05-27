@@ -83,7 +83,7 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 DBAdapter db = new DBAdapter(getActivity());
-                long id = db.insertData(getData("id"));
+                long id = db.insertRow(getData("id"));
                 if (id == 0) {
                     Log.e(DetailsFragment.class.toString(), "SQLite id insert failed");
                 } else {

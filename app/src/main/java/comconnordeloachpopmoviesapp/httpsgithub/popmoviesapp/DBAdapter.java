@@ -20,13 +20,9 @@ public class DBAdapter {
         helper = new DBOpenHelper(context);
     }
 
-    public long insertData(String column, String data) {
+    public long insertRow(ContentValues contentValues) {
         // Retrieve SQLite database
         SQLiteDatabase db = helper.getWritableDatabase();
-
-        // Create the set of values to insert into database
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(column, data);
 
         // Insert value-pair into database
         return db.insert(DBContract.TABLE_NAME, null, contentValues);
