@@ -28,17 +28,15 @@ public class DBAdapter {
         return db.insert(DBContract.TABLE_NAME, null, contentValues);
     }
 
-    public Cursor queryData(String uid, String[] column) {
+    public Cursor queryDatabase(String row, String[] columnNames) {
         // Retrieve SQLite database
         SQLiteDatabase db = helper.getWritableDatabase();
 
         // Query the database
-        return db.query(DBContract.TABLE_NAME, column, uid, null, null, null, null);
+        return db.query(DBContract.TABLE_NAME, columnNames, DBContract.UID + "=?", new String[]{row}, null, null, null);
     }
 
     class DBOpenHelper extends SQLiteOpenHelper {
-
-
 
         public DBOpenHelper(Context context) {
             super(context, DBContract.DATABASE_NAME, null, DBContract.DATABASE_VERSION);
@@ -54,7 +52,6 @@ public class DBAdapter {
                 Log.e(DBAdapter.class.toString(), "CREATE_TABLE failed");
                 exc.printStackTrace();
             }
-
         }
 
         @Override
@@ -68,7 +65,6 @@ public class DBAdapter {
                 Log.e(DBAdapter.class.toString(), "DROP TABLE failed");
                 exc.printStackTrace();
             }
-
         }
     }
 }

@@ -32,6 +32,9 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
     final String MOVIE_POSTER = "poster_path";
     final String MOVIE_ID = "id";
     final String MOVIE_TITLE = "title";
+    final String MOVIE_RELEASE_DATE = "release_date";
+    final String MOVIE_RATING = "vote_average";
+    final String MOVIE_SYNOPSIS = "overview";
     private Context context;
 
     MyAsyncTask(Context context) {
@@ -133,39 +136,22 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
 
             // Iterate through moviesArray and construct movies database
             for (int i = 0; i < moviesArray.length(); i++) {
-                // Values to hold
-                String movieId;
-                String moviePoster;
-                String title;
-                String date;
-                String rating;
-                String synopsis;
 
-                // Check to see if movie exists in database
+                // Retrieve movie object from json
                 JSONObject movie = moviesArray.getJSONObject(i);
-                if (dbAdapter.queryData(movie.getString(MOVIE_ID), new String[]{DBContract.UID}).getCount() == 0) {
 
-                    // Retrieve _id
-                    movieId = movie.getString(MOVIE_ID);
-                    // Retrieve movie poster path
-                    moviePoster = movie.getString(MOVIE_POSTER);
-                    // Retrieve movie title
-                    title = movie.getString(MOVIE_TITLE);
-                    // Retrieve movie release date
-                    date = getEasyDate(movie.getString("release_date"));
-                    // Retrieve movie rating
-                    rating = movie.getString("vote_average");
-                    // Retrieve movie synopsis
-                    synopsis = movie.getString("overview");
+                // Check if movie exists in database
+                MovieObject movieObject = new MovieObject(context, movie.getString(MOVIE_ID));
+                if (!movieObject.isMovieExists()) {
 
                     // Put values into ContentValues
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBContract.UID, movieId);
-                    contentValues.put(DBContract.POSTER_PATH, moviePoster);
-                    contentValues.put(DBContract.MOVIE_TITLE, title);
-                    contentValues.put(DBContract.RELEASE_DATE, date);
-                    contentValues.put(DBContract.VOTE_AVERAGE, rating);
-                    contentValues.put(DBContract.SYNOPSIS, synopsis);
+                    contentValues.put(DBContract.UID, movie.getString(MOVIE_ID));
+                    contentValues.put(DBContract.POSTER_PATH, movie.getString(MOVIE_POSTER));
+                    contentValues.put(DBContract.MOVIE_TITLE, movie.getString(MOVIE_TITLE));
+                    contentValues.put(DBContract.RELEASE_DATE, getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
+                    contentValues.put(DBContract.VOTE_AVERAGE, movie.getString(MOVIE_RATING));
+                    contentValues.put(DBContract.SYNOPSIS, movie.getString(MOVIE_SYNOPSIS));
 
                     // Insert into database
                     dbAdapter.insertRow(contentValues);

@@ -126,6 +126,7 @@ public class MainFragment extends Fragment {
         // Construct JSON object and extract movie JSON object (as String)
         JSONObject jsonObject = new JSONObject(MyAsyncTask.jsonStr);
         JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
-        return moviesArray.getJSONObject(position).toString();
+        JSONObject movie = moviesArray.getJSONObject(position);
+        return movie.getString("id");
     }
 }
