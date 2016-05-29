@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * Created by Connor on 5/25/2016.
+ * Manages communication between moviesDB and internal app sqlite database
  */
 public class MyAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -35,6 +35,7 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
     final String MOVIE_RELEASE_DATE = "release_date";
     final String MOVIE_RATING = "vote_average";
     final String MOVIE_SYNOPSIS = "overview";
+    String movieType = "";
     private Context context;
 
     MyAsyncTask(Context context) {
@@ -52,9 +53,11 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
         switch (params[0]) {
             case "popular":
                 params[0] = POPULAR_MOVIE_BASEURL;
+                movieType = "popular";
                 break;
             case "top_rated":
                 params[0] = TOP_RATED_BASEURL;
+                movieType = "top_rated";
                 break;
             default:
                 Log.e(MyAsyncTask.class.toString(), "Invalid params");
@@ -134,6 +137,9 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
             JSONObject jsonObject = new JSONObject(jsonString);
             JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
 
+            // List of current movies
+            String[] moviesList = new String[moviesArray.length()];
+
             // Iterate through moviesArray and construct movies database
             for (int i = 0; i < moviesArray.length(); i++) {
 
@@ -152,10 +158,19 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
                     contentValues.put(DBContract.RELEASE_DATE, getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
                     contentValues.put(DBContract.VOTE_AVERAGE, movie.getString(MOVIE_RATING));
                     contentValues.put(DBContract.SYNOPSIS, movie.getString(MOVIE_SYNOPSIS));
+                    contentValues.put(DBContract.TYPE, movieType);
 
                     // Insert into database
                     dbAdapter.insertRow(contentValues);
+                    moviesList[i] = movie.getString(MOVIE_ID);
+                } else {
+                    moviesList[i] = movie.getString(MOVIE_ID);
                 }
+            }
+            // Delete old movies
+            if (moviesList.length > 0) {
+                int debug = dbAdapter.deleteRows(moviesList, movieType);
+                Log.i("DEBUG", debug + "");
             }
         } catch (JSONException exc) {
             Log.e(MyAsyncTask.class.toString(), "Failed to insert data into database");

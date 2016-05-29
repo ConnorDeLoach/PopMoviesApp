@@ -7,7 +7,7 @@ public class DBContract {
 
     static final String DATABASE_NAME = "PopMoviesAppDB";
     static final String TABLE_NAME = "APPDATA";
-    static final int DATABASE_VERSION = 12;
+    static final int DATABASE_VERSION = 14;
 
     // Column names
     static final String UID = "_id";
@@ -17,6 +17,7 @@ public class DBContract {
     static final String RELEASE_DATE = "release_date";
     static final String VOTE_AVERAGE = "vote_average";
     static final String SYNOPSIS = "synopsis";
+    static final String TYPE = "type";
     static final String[] columnNames = {UID, FAVORITES, POSTER_PATH, MOVIE_TITLE, RELEASE_DATE, VOTE_AVERAGE, SYNOPSIS};
 
     // SQLite methods
@@ -27,5 +28,6 @@ public class DBContract {
             + MOVIE_TITLE + " TEXT, "
             + RELEASE_DATE + " TEXT, "
             + VOTE_AVERAGE + " TEXT, "
-            + SYNOPSIS + " TEXT);";
+            + SYNOPSIS + " TEXT, "
+            + TYPE + " TEXT);";
 }

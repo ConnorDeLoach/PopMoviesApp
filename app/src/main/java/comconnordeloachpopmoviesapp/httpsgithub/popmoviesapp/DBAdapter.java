@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
- * Created by connor on 5/6/16.
+ * Manages the life cycle of the sqlite database
  */
 
 public class DBAdapter {
@@ -34,6 +34,20 @@ public class DBAdapter {
 
         // Query the database
         return db.query(DBContract.TABLE_NAME, columnNames, DBContract.UID + "=?", new String[]{row}, null, null, null);
+    }
+
+    public int deleteRows(String[] movieList, String movieType) {
+        // Retrieve SQLite database
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        // Number of arguments
+        String arguments = "";
+        for (int i = 1; i < movieList.length; i++) {
+            arguments = arguments + ", ?";
+        }
+
+        // Delete row
+        return db.delete(DBContract.TABLE_NAME, DBContract.UID + " NOT IN (?" + arguments + ") AND " + DBContract.TYPE + " =\' " + movieType + "\'", movieList);
     }
 
     class DBOpenHelper extends SQLiteOpenHelper {
