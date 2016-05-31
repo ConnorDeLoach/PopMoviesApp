@@ -19,7 +19,7 @@ public class MovieObject {
     MovieObject(Context context, String movieId) {
         // Check if movie exists
         DBAdapter dbAdapter = new DBAdapter(context);
-        Cursor cursor = dbAdapter.queryDatabase(movieId, DBContract.columnNames);
+        Cursor cursor = dbAdapter.queryRow(movieId, DBContract.columnNames);
         if (!cursor.moveToFirst()) {
             movieExists = false;
         } else {

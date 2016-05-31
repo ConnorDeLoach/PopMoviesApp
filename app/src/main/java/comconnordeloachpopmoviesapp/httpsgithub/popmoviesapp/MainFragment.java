@@ -1,6 +1,7 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,12 +23,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by connor on 4/11/16.
+ * Contains the gridview of movieposter views. Each clickable to start a details view.
  */
 public class MainFragment extends Fragment {
 
     // MainFragment variables
     public static CustomAdapter mGridAdapter;
+    private String movieType;
 
     public MainFragment() {
         setHasOptionsMenu(true);
@@ -49,11 +51,15 @@ public class MainFragment extends Fragment {
                 switch (position) {
                     case 0:
                         MyAsyncTask fetchPopMoviePosters = new MyAsyncTask(getActivity());
-                        fetchPopMoviePosters.execute("popular");
+                        movieType = "popular";
+                        setGridView();
+                        fetchPopMoviePosters.execute(movieType);
                         break;
                     case 1:
                         MyAsyncTask fetchTopMoviePosters = new MyAsyncTask(getActivity());
-                        fetchTopMoviePosters.execute("top_rated");
+                        movieType = "top_rated";
+                        setGridView();
+                        fetchTopMoviePosters.execute(movieType);
                         break;
                 }
             }
@@ -128,5 +134,20 @@ public class MainFragment extends Fragment {
         JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
         JSONObject movie = moviesArray.getJSONObject(position);
         return movie.getString("id");
+    }
+
+    private void setGridView() {
+        // Open access to SQLite database
+        DBAdapter dbAdapter = new DBAdapter(getActivity());
+        // Clear Gridview
+        mGridAdapter.clear();
+
+        // Run Cursor over database
+        Cursor cursor = dbAdapter.queryDatabase(movieType);
+        while (cursor.moveToNext()) {
+            // Add poster path to mGridAdapter
+            MainFragment.mGridAdapter.add(cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH)));
+        }
+        MainFragment.mGridAdapter.notifyDataSetChanged();
     }
 }

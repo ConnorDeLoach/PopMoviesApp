@@ -28,7 +28,15 @@ public class DBAdapter {
         return db.insert(DBContract.TABLE_NAME, null, contentValues);
     }
 
-    public Cursor queryDatabase(String row, String[] columnNames) {
+    public Cursor queryDatabase(String type) {
+        // Retrieve SQLite database
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        // Query the database
+        return db.query(DBContract.TABLE_NAME, null, DBContract.TYPE + "=?", new String[]{type}, null, null, null);
+    }
+
+    public Cursor queryRow(String row, String[] columnNames) {
         // Retrieve SQLite database
         SQLiteDatabase db = helper.getWritableDatabase();
 

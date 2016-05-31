@@ -120,14 +120,6 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
             Log.e(MyAsyncTask.class.toString(), "AsyncTask failed to retrieve data");
             return;
         }
-        // Execute getImageDataFromJson task
-        try {
-            getImageDataFromJson(jsonString);
-            // Notify mGridAdapter to refresh
-            MainFragment.mGridAdapter.notifyDataSetChanged();
-        } catch (JSONException exc) {
-            Log.e(MyAsyncTask.class.toString(), exc.getMessage(), exc);
-        }
         // Insert Data into SQLite DB
         try {
             // Initialize SQLite database
@@ -174,31 +166,6 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
             }
         } catch (JSONException exc) {
             Log.e(MyAsyncTask.class.toString(), "Failed to insert data into database");
-        }
-    }
-
-    /**
-     * Takes the JSON String from AsyncTask and extracts movie poster paths
-     * @param jsonString from MyAsyncTask
-     * @throws JSONException
-     */
-    private void getImageDataFromJson(String jsonString)
-            throws JSONException {
-
-        // Construct JSON object and extract movies array
-        JSONObject jsonObject = new JSONObject(jsonString);
-        JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
-
-        // Clear mGridAdapter
-        MainFragment.mGridAdapter.clear();
-
-        // Go through every index of moviesArray and extract posterPath
-        for (int i = 0; i < moviesArray.length(); i++) {
-            // Retrieve movie JSON object
-            JSONObject movie = moviesArray.getJSONObject(i);
-
-            // Add poster path to mGridAdapter
-            MainFragment.mGridAdapter.add(movie.getString(MOVIE_POSTER));
         }
     }
 
