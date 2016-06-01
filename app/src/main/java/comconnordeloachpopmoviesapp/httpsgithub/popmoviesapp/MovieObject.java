@@ -10,6 +10,8 @@ public class MovieObject {
 
     // values
     private boolean movieExists;
+    private String movieId;
+    private int movieIsFavorite;
     private String moviePoster = "http://image.tmdb.org/t/p/w342/";
     private String movieTitle;
     private String releaseDate;
@@ -17,6 +19,9 @@ public class MovieObject {
     private String synopsis;
 
     MovieObject(Context context, String movieId) {
+
+        this.movieId = movieId;
+
         // Check if movie exists
         DBAdapter dbAdapter = new DBAdapter(context);
         Cursor cursor = dbAdapter.queryRow(movieId, DBContract.columnNames);
@@ -25,6 +30,8 @@ public class MovieObject {
         } else {
             // Movie exists, populating movie values
             movieExists = true;
+            // Set movie isFavorite
+            movieIsFavorite = cursor.getInt(cursor.getColumnIndex(DBContract.FAVORITES));
             // Set movie poster
             moviePoster = moviePoster + cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH));
             // Set movieTitle
@@ -36,6 +43,14 @@ public class MovieObject {
             // Set synopsis
             synopsis = cursor.getString(cursor.getColumnIndex(DBContract.SYNOPSIS));
         }
+    }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public int getMovieIsFavorite() {
+        return movieIsFavorite;
     }
 
     public boolean isMovieExists() {

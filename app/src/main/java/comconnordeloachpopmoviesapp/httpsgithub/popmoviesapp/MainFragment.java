@@ -2,6 +2,7 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +18,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Contains the gridview of movieposter views. Each clickable to start a details view.
@@ -81,16 +78,10 @@ public class MainFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    String movie = getDetailsActivity(position);
-                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                    intent.putExtra(Intent.EXTRA_TEXT, movie);
-                    startActivity(intent);
-
-                } catch (JSONException exc) {
-                    Log.e(MainFragment.class.toString(), exc.getMessage(), exc);
-                    exc.printStackTrace();
-                }
+                String movie = setDetailsActivity(position);
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, movie);
+                startActivity(intent);
             }
         });
 
@@ -118,24 +109,28 @@ public class MainFragment extends Fragment {
     }
 
     /**
-     * Method to package specific movie JSON object when a movie poster is touched
-     *
-     * @param position of view in gridView
-     * @return String representation of JSON object
-     * @throws JSONException
+     * Accesses database using the posterpath in each view in GridView to retrieve movie ID for details view
+     * @param position of each view in gridview
+     * @return String with movie ID
      */
-    private String getDetailsActivity(int position)
-            throws JSONException {
-        // Name of JSON Objects and arrays
-        final String RESULTS = "results";
+    private String setDetailsActivity(int position) {
+        // Get poster path from the clicked view
+        String posterPath = mGridAdapter.getItem(position);
 
-        // Construct JSON object and extract movie JSON object (as String)
-        JSONObject jsonObject = new JSONObject(MyAsyncTask.jsonStr);
-        JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
-        JSONObject movie = moviesArray.getJSONObject(position);
-        return movie.getString("id");
+        // Use the poster path to identify the movie and retrieve the movie's ID
+        DBAdapter dbAdapter = new DBAdapter(getActivity());
+        SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
+        Cursor cursor = db.query(DBContract.TABLE_NAME, new String[]{DBContract.UID}, DBContract.POSTER_PATH + "=?", new String[]{posterPath}, null, null, null);
+        cursor.moveToFirst();
+        String data = cursor.getString(cursor.getColumnIndex(DBContract.UID));
+        cursor.close();
+        Log.i("DEBUG", data);
+        return data;
     }
 
+    /**
+     * Accesses database to retrieve mover poster URI for GridView
+     */
     private void setGridView() {
         // Open access to SQLite database
         DBAdapter dbAdapter = new DBAdapter(getActivity());
@@ -146,8 +141,9 @@ public class MainFragment extends Fragment {
         Cursor cursor = dbAdapter.queryDatabase(movieType);
         while (cursor.moveToNext()) {
             // Add poster path to mGridAdapter
-            MainFragment.mGridAdapter.add(cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH)));
+            mGridAdapter.add(cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH)));
         }
-        MainFragment.mGridAdapter.notifyDataSetChanged();
+        cursor.close();
+        mGridAdapter.notifyDataSetChanged();
     }
 }

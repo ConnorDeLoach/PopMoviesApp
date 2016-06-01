@@ -1,13 +1,18 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +38,7 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         View root = inflater.inflate(R.layout.fragment_details, container, false);
 
         // Retrieve movie object
-        String movieId = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        final String movieId = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
         MovieObject movieObject = new MovieObject(getActivity(), movieId);
 
         // Attach title
@@ -55,52 +60,38 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         // Attach movie synopsis
         TextView synopsis = (TextView) root.findViewById(R.id.details_synopsis);
         synopsis.setText(movieObject.getSynopsis());
-/*
+
+        // Create toolbar
+        Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        // Enable home navigation button
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Setup favorites logic
-        DBAdapter dbAdapter = new DBAdapter(getActivity());
-        String[] isFavorite = {DBContract.FAVORITES};
-        Cursor cursor = dbAdapter.queryOneItem("_id=" + getData("id"), isFavorite);
-
+        final CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite);
         // Check to see if movie is favorite or not
-        if (cursor.getCount() != 1) {
-            Log.e(DetailsFragment.class.getSimpleName(), "Did not retrieve exactly 1 row during favorites query");
-            cursor.close();
-        } else {
-            // Move cursor to column
-            cursor.moveToFirst();
-
-            // Load correct toolbar depending on whether movie is favorited or not
-            if (cursor.getInt(0) == 0) {
-                // Create toolbar
-                Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar);
-                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-                // Enable home navigation button
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_border);
-            } else {
-                // Create toolbar
-                Toolbar toolbar = (Toolbar) root.findViewById(R.id.details_toolbar_favorite);
-                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-                // Enable home navigation button
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_filled);
-            }
+        if (movieObject.getMovieIsFavorite() == 1) {
+            checkBox.setChecked(true);
         }
 
-
-        CheckBox checkBox = (CheckBox) root.findViewById(R.id.favorite_border);
+        // update favorite change in database
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBAdapter db = new DBAdapter(getActivity());
-                long id = db.insertRow(getData("id"));
-                if (id == 0) {
-                    Log.e(DetailsFragment.class.toString(), "SQLite id insert failed");
+                DBAdapter dbAdapter = new DBAdapter(getActivity());
+                if (checkBox.isChecked()) {
+                    SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(DBContract.FAVORITES, 1);
+                    db.update(DBContract.TABLE_NAME, contentValues, DBContract.UID + "=?", new String[]{movieId});
                 } else {
-                    Toast.makeText(getActivity(), "Succesfully inserted movie is", Toast.LENGTH_SHORT).show();
+                    SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(DBContract.FAVORITES, 0);
+                    db.update(DBContract.TABLE_NAME, contentValues, DBContract.UID + "=?", new String[]{movieId});
                 }
             }
-        });*/
+        });
 
         return root;
     }
