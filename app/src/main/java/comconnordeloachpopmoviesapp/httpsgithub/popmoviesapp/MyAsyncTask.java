@@ -122,21 +122,19 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
         }
         // Insert Data into SQLite DB
         try {
-            // Initialize SQLite database
-            DBAdapter dbAdapter = new DBAdapter(context);
-
             // Construct JSON object and extract movies array
             JSONObject jsonObject = new JSONObject(jsonString);
             JSONArray moviesArray = jsonObject.getJSONArray(RESULTS);
 
             // List of current movies
-            String[] moviesList = new String[moviesArray.length()];
+            String[] currentMovies = new String[moviesArray.length()];
 
             // Iterate through moviesArray and construct movies database
             for (int i = 0; i < moviesArray.length(); i++) {
-
                 // Retrieve movie object from json
                 JSONObject movie = moviesArray.getJSONObject(i);
+                // Add movie to list of current movies
+                currentMovies[i] = movie.getString(MOVIE_ID);
 
                 // Check if movie exists in database
                 MovieObject movieObject = new MovieObject(context, movie.getString(MOVIE_ID));
@@ -144,29 +142,24 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
 
                     // Put values into ContentValues
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBContract.UID, movie.getString(MOVIE_ID));
-                    contentValues.put(DBContract.POSTER_PATH, movie.getString(MOVIE_POSTER));
-                    contentValues.put(DBContract.MOVIE_TITLE, movie.getString(MOVIE_TITLE));
-                    contentValues.put(DBContract.RELEASE_DATE, getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
-                    contentValues.put(DBContract.VOTE_AVERAGE, movie.getString(MOVIE_RATING));
-                    contentValues.put(DBContract.SYNOPSIS, movie.getString(MOVIE_SYNOPSIS));
-                    contentValues.put(DBContract.TYPE, movieType);
+                    contentValues.put(MoviesContract.UID, movie.getString(MOVIE_ID));
+                    contentValues.put(MoviesContract.POSTER_PATH, movie.getString(MOVIE_POSTER));
+                    contentValues.put(MoviesContract.MOVIE_TITLE, movie.getString(MOVIE_TITLE));
+                    contentValues.put(MoviesContract.RELEASE_DATE, getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
+                    contentValues.put(MoviesContract.VOTE_AVERAGE, movie.getString(MOVIE_RATING));
+                    contentValues.put(MoviesContract.SYNOPSIS, movie.getString(MOVIE_SYNOPSIS));
+                    contentValues.put(MoviesContract.TYPE, movieType);
 
                     // Insert into database
-                    dbAdapter.insertRow(contentValues);
-                    moviesList[i] = movie.getString(MOVIE_ID);
-                } else {
-                    moviesList[i] = movie.getString(MOVIE_ID);
+                    context.getContentResolver().insert(MovieProvider.CONTENT_URI, contentValues);
                 }
             }
             // Delete old movies
-            if (moviesList.length > 0) {
-                int debug = dbAdapter.deleteRows(moviesList, movieType);
-                Log.i("DEBUG", debug + "");
-            }
+            String whereArgs = SQLiteDeleteString(currentMovies);
+            context.getContentResolver().delete(MovieProvider.CONTENT_URI, MoviesContract.UID + " NOT IN (" + whereArgs, null);
         } catch (JSONException exc) {
             Log.e(MyAsyncTask.class.toString(), "Failed to insert data into database");
-        }
+            }
     }
 
     /**
@@ -183,5 +176,17 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
         return date;
+    }
+
+    private String SQLiteDeleteString(String[] currentMovies) {
+        String args = "";
+        for (int i = 0; i < currentMovies.length; i++) {
+            if (i == currentMovies.length - 1) {
+                args = args + currentMovies[i];
+            } else {
+                args = args + currentMovies[i] + ", ";
+            }
+        }
+        return args + ") AND " + MoviesContract.TYPE + " =\'" + movieType + "\'";
     }
 }

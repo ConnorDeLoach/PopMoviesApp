@@ -2,7 +2,6 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -78,17 +77,14 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBAdapter dbAdapter = new DBAdapter(getActivity());
                 if (checkBox.isChecked()) {
-                    SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBContract.FAVORITES, 1);
-                    db.update(DBContract.TABLE_NAME, contentValues, DBContract.UID + "=?", new String[]{movieId});
+                    contentValues.put(MoviesContract.FAVORITES, 1);
+                    getContext().getContentResolver().update(MovieProvider.CONTENT_URI, contentValues, MoviesContract.UID + "=?", new String[]{movieId});
                 } else {
-                    SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(DBContract.FAVORITES, 0);
-                    db.update(DBContract.TABLE_NAME, contentValues, DBContract.UID + "=?", new String[]{movieId});
+                    contentValues.put(MoviesContract.FAVORITES, 0);
+                    getContext().getContentResolver().update(MovieProvider.CONTENT_URI, contentValues, MoviesContract.UID + "=?", new String[]{movieId});
                 }
             }
         });

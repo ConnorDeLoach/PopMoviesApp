@@ -2,6 +2,7 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 /**
  *
@@ -23,25 +24,33 @@ public class MovieObject {
         this.movieId = movieId;
 
         // Check if movie exists
-        DBAdapter dbAdapter = new DBAdapter(context);
-        Cursor cursor = dbAdapter.queryRow(movieId, DBContract.columnNames);
-        if (!cursor.moveToFirst()) {
-            movieExists = false;
-        } else {
-            // Movie exists, populating movie values
-            movieExists = true;
-            // Set movie isFavorite
-            movieIsFavorite = cursor.getInt(cursor.getColumnIndex(DBContract.FAVORITES));
-            // Set movie poster
-            moviePoster = moviePoster + cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH));
-            // Set movieTitle
-            movieTitle = cursor.getString(cursor.getColumnIndex(DBContract.MOVIE_TITLE));
-            // Set release date
-            releaseDate = cursor.getString(cursor.getColumnIndex(DBContract.RELEASE_DATE));
-            // Set rating
-            rating = cursor.getString(cursor.getColumnIndex(DBContract.VOTE_AVERAGE)) + rating;
-            // Set synopsis
-            synopsis = cursor.getString(cursor.getColumnIndex(DBContract.SYNOPSIS));
+        Cursor cursor = context.getContentResolver().query(MovieProvider.CONTENT_URI, null, MoviesContract.UID + "=?", new String[]{movieId}, null);
+
+        try {
+            if (!cursor.moveToFirst()) {
+                movieExists = false;
+            } else {
+                // Movie exists, populating movie values
+                movieExists = true;
+                // Set movie isFavorite
+                movieIsFavorite = cursor.getInt(cursor.getColumnIndex(MoviesContract.FAVORITES));
+                // Set movie poster
+                moviePoster = moviePoster + cursor.getString(cursor.getColumnIndex(MoviesContract.POSTER_PATH));
+                // Set movieTitle
+                movieTitle = cursor.getString(cursor.getColumnIndex(MoviesContract.MOVIE_TITLE));
+                // Set release date
+                releaseDate = cursor.getString(cursor.getColumnIndex(MoviesContract.RELEASE_DATE));
+                // Set rating
+                rating = cursor.getString(cursor.getColumnIndex(MoviesContract.VOTE_AVERAGE)) + rating;
+                // Set synopsis
+                synopsis = cursor.getString(cursor.getColumnIndex(MoviesContract.SYNOPSIS));
+            }
+        } catch (NullPointerException exc) {
+            Log.e(MovieObject.class.getSimpleName(), "Cursor could not read database");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 

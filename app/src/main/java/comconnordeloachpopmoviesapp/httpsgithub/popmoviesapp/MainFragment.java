@@ -2,7 +2,6 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -118,30 +117,26 @@ public class MainFragment extends Fragment {
         String posterPath = mGridAdapter.getItem(position);
 
         // Use the poster path to identify the movie and retrieve the movie's ID
-        DBAdapter dbAdapter = new DBAdapter(getActivity());
-        SQLiteDatabase db = dbAdapter.helper.getWritableDatabase();
-        Cursor cursor = db.query(DBContract.TABLE_NAME, new String[]{DBContract.UID}, DBContract.POSTER_PATH + "=?", new String[]{posterPath}, null, null, null);
+        Cursor cursor = getContext().getContentResolver().query(MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID}, MoviesContract.POSTER_PATH + "=?", new String[]{posterPath}, null);
         cursor.moveToFirst();
-        String data = cursor.getString(cursor.getColumnIndex(DBContract.UID));
+        String data = cursor.getString(cursor.getColumnIndex(MoviesContract.UID));
         cursor.close();
-        Log.i("DEBUG", data);
         return data;
     }
 
     /**
-     * Accesses database to retrieve mover poster URI for GridView
+     * Accesses database to retrieve movie poster URI for GridView
      */
     private void setGridView() {
-        // Open access to SQLite database
-        DBAdapter dbAdapter = new DBAdapter(getActivity());
         // Clear Gridview
         mGridAdapter.clear();
 
         // Run Cursor over database
-        Cursor cursor = dbAdapter.queryDatabase(movieType);
+        Cursor cursor = getContext().getContentResolver().query(MovieProvider.CONTENT_URI, null, MoviesContract.TYPE + "=?", new String[]{movieType}, null);
+        Log.i("DEBUG", cursor.getCount() + "");
         while (cursor.moveToNext()) {
             // Add poster path to mGridAdapter
-            mGridAdapter.add(cursor.getString(cursor.getColumnIndex(DBContract.POSTER_PATH)));
+            mGridAdapter.add(cursor.getString(cursor.getColumnIndex(MoviesContract.POSTER_PATH)));
         }
         cursor.close();
         mGridAdapter.notifyDataSetChanged();

@@ -1,13 +1,10 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 /**
- * Class to control database scheme
+ * Class to control database and provider scheme
  */
-public class DBContract {
-
-    static final String DATABASE_NAME = "PopMoviesAppDB";
-    static final String TABLE_NAME = "APPDATA";
-    static final int DATABASE_VERSION = 14;
+public class MoviesContract {
+    static final String TABLE_MOVIES = "movies";
 
     // Column names
     static final String UID = "_id";
@@ -21,8 +18,8 @@ public class DBContract {
     static final String[] columnNames = {UID, FAVORITES, POSTER_PATH, MOVIE_TITLE, RELEASE_DATE, VOTE_AVERAGE, SYNOPSIS};
 
     // SQLite methods
-    static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + UID + " INTEGER PRIMARY KEY NOT NULL, "
+    static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_MOVIES;
+    static final String CREATE_TABLE = "CREATE TABLE " + TABLE_MOVIES + " (" + UID + " INTEGER PRIMARY KEY NOT NULL, "
             + FAVORITES + " INTEGER DEFAULT 0,"
             + POSTER_PATH + " TEXT, "
             + MOVIE_TITLE + " TEXT, "

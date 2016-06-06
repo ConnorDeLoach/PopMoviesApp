@@ -20,6 +20,10 @@
         <activity android:name=".DetailsActivity"
             android:parentActivityName=".MainActivity">
         </activity>
+
+        <provider
+            android:name=".MovieProvider"
+            android:authorities="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp" />
     </application>
 
 </manifest>
