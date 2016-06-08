@@ -3,10 +3,13 @@ package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,12 +24,13 @@ import android.widget.Toast;
 /**
  * Contains the gridview of movieposter views. Each clickable to start a details view.
  */
-public class MainFragment extends Fragment {
-
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int MOVIE_LOADER = 0;
     // MainFragment variables
-    public static CustomAdapter mGridAdapter;
-    private String movieType;
+    private MovieAdapter mMovieAdapter;
+    private String movieType = "popular";
 
+    // This line makes it so this fragment can handle menu events.
     public MainFragment() {
         setHasOptionsMenu(true);
     }
@@ -34,6 +38,11 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main_layout, container, false);
+
+        // Attach mMovieAdapter to GridView
+        mMovieAdapter = new MovieAdapter(getContext(), null, 0);
+        GridView gridView = (GridView) root.findViewById(R.id.grid_view);
+        gridView.setAdapter(mMovieAdapter);
 
         //Create toolbar
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
@@ -47,15 +56,19 @@ public class MainFragment extends Fragment {
                 switch (position) {
                     case 0:
                         MyAsyncTask fetchPopMoviePosters = new MyAsyncTask(getActivity());
-                        movieType = "popular";
-                        setGridView();
-                        fetchPopMoviePosters.execute(movieType);
+                        if (!movieType.equals("popular")) {
+                            movieType = "popular";
+                            fetchPopMoviePosters.execute(movieType);
+                            getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
+                        }
                         break;
                     case 1:
                         MyAsyncTask fetchTopMoviePosters = new MyAsyncTask(getActivity());
-                        movieType = "top_rated";
-                        setGridView();
-                        fetchTopMoviePosters.execute(movieType);
+                        if (!movieType.equals("top_rated")) {
+                            movieType = "top_rated";
+                            fetchTopMoviePosters.execute(movieType);
+                            getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
+                        }
                         break;
                 }
             }
@@ -65,13 +78,6 @@ public class MainFragment extends Fragment {
 
             }
         });
-
-        // Create CustomAdapter connected to single grid imageview layout and moviePosterPaths data
-        mGridAdapter = new CustomAdapter(getActivity(), R.layout.single_gridview, R.id.image_view);
-        GridView gridView = (GridView) root.findViewById(R.id.grid_view);
-
-        // Attach CustomAdapter to MainFragment's layout
-        gridView.setAdapter(mGridAdapter);
 
         // Set onClickListener to launch details fragment when a movie poster is touched
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,6 +91,12 @@ public class MainFragment extends Fragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -108,37 +120,32 @@ public class MainFragment extends Fragment {
     }
 
     /**
-     * Accesses database using the posterpath in each view in GridView to retrieve movie ID for details view
+     * Passes movieId from a touched view in GridView into an intent for DetailsFragment
      * @param position of each view in gridview
      * @return String with movie ID
      */
     private String setDetailsActivity(int position) {
         // Get poster path from the clicked view
-        String posterPath = mGridAdapter.getItem(position);
-
-        // Use the poster path to identify the movie and retrieve the movie's ID
-        Cursor cursor = getContext().getContentResolver().query(MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID}, MoviesContract.POSTER_PATH + "=?", new String[]{posterPath}, null);
-        cursor.moveToFirst();
-        String data = cursor.getString(cursor.getColumnIndex(MoviesContract.UID));
-        cursor.close();
-        return data;
+        Cursor cursor = mMovieAdapter.getCursor();
+        cursor.moveToPosition(position);
+        return cursor.getString(0);
     }
 
-    /**
-     * Accesses database to retrieve movie poster URI for GridView
-     */
-    private void setGridView() {
-        // Clear Gridview
-        mGridAdapter.clear();
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID, MoviesContract.POSTER_PATH}, MoviesContract.TYPE + "=?", new String[]{movieType}, null);
 
-        // Run Cursor over database
-        Cursor cursor = getContext().getContentResolver().query(MovieProvider.CONTENT_URI, null, MoviesContract.TYPE + "=?", new String[]{movieType}, null);
-        Log.i("DEBUG", cursor.getCount() + "");
-        while (cursor.moveToNext()) {
-            // Add poster path to mGridAdapter
-            mGridAdapter.add(cursor.getString(cursor.getColumnIndex(MoviesContract.POSTER_PATH)));
-        }
-        cursor.close();
-        mGridAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Swap the cursor in, framework will close the old cursor once the new data is in MovieAdapter.
+        mMovieAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // Swap the cursor with null to make sure we are no longer using it before the cursor is closed.
+        mMovieAdapter.swapCursor(null);
     }
 }
