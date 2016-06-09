@@ -21,7 +21,12 @@ public class MovieAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.single_gridview, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.single_gridview, parent, false);
+
+        ViewHolder viewHolder = new ViewHolder(view);
+        view.setTag(viewHolder);
+
+        return view;
     }
 
     @Override
@@ -32,8 +37,17 @@ public class MovieAdapter extends CursorAdapter {
         String posterPath = cursor.getString(1);
 
         // Bind view returned from newView and use picasso to inject image
-        ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
-        Picasso.with(context).load(BASE_URL + posterPath).placeholder(android.R.mipmap.sym_def_app_icon).error(android.R.mipmap.sym_def_app_icon).into(imageView);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        Picasso.with(context).load(BASE_URL + posterPath).placeholder(android.R.mipmap.sym_def_app_icon).error(android.R.mipmap.sym_def_app_icon).into(viewHolder.imageView);
 
+    }
+
+    // ViewHolderder pattern for the imageview picasso injects into each view in GridView
+    static class ViewHolder {
+        final ImageView imageView;
+
+        ViewHolder(View view) {
+            imageView = (ImageView) view.findViewById(R.id.image_view);
+        }
     }
 }
