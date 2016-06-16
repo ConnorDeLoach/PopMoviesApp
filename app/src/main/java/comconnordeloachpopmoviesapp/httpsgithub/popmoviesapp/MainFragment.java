@@ -46,7 +46,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         //Create toolbar
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         // Create Spinner actions: sort by popular, or by top rated
         Spinner spinner = (Spinner) root.findViewById(R.id.spinner_menu);
@@ -55,18 +55,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        MyAsyncTask fetchPopMoviePosters = new MyAsyncTask(getActivity());
                         if (!movieType.equals("popular")) {
                             movieType = "popular";
-                            fetchPopMoviePosters.execute(movieType);
                             getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
                         }
                         break;
                     case 1:
-                        MyAsyncTask fetchTopMoviePosters = new MyAsyncTask(getActivity());
                         if (!movieType.equals("top_rated")) {
                             movieType = "top_rated";
-                            fetchTopMoviePosters.execute(movieType);
                             getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
                         }
                         break;
@@ -83,9 +79,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String movie = setDetailsActivity(position);
+                String movieId = setDetailsActivity(position);
+
+                // Get movieId to pass to details fragment
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, movie);
+                intent.putExtra(Intent.EXTRA_TEXT, movieId);
                 startActivity(intent);
             }
         });

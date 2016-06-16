@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 /**
- *
+ * Class to build an object containing all information for a movie
  */
 public class MovieObject {
 
@@ -18,32 +18,37 @@ public class MovieObject {
     private String releaseDate;
     private String rating = "/10";
     private String synopsis;
+    private String trailer;
 
-    MovieObject(Context context, String movieId) {
+    public MovieObject(Context context, String movieId) {
 
         this.movieId = movieId;
 
         // Check if movie exists
-        Cursor cursor = context.getContentResolver().query(MovieProvider.CONTENT_URI, null, MoviesContract.UID + "=?", new String[]{movieId}, null);
-
+        Cursor cursor = null;
         try {
-            if (!cursor.moveToFirst()) {
-                movieExists = false;
-            } else {
-                // Movie exists, populating movie values
-                movieExists = true;
-                // Set movie isFavorite
-                movieIsFavorite = cursor.getInt(cursor.getColumnIndex(MoviesContract.FAVORITES));
-                // Set movie poster
-                moviePoster = moviePoster + cursor.getString(cursor.getColumnIndex(MoviesContract.POSTER_PATH));
-                // Set movieTitle
-                movieTitle = cursor.getString(cursor.getColumnIndex(MoviesContract.MOVIE_TITLE));
-                // Set release date
-                releaseDate = cursor.getString(cursor.getColumnIndex(MoviesContract.RELEASE_DATE));
-                // Set rating
-                rating = cursor.getString(cursor.getColumnIndex(MoviesContract.VOTE_AVERAGE)) + rating;
-                // Set synopsis
-                synopsis = cursor.getString(cursor.getColumnIndex(MoviesContract.SYNOPSIS));
+            cursor = context.getContentResolver().query(MovieProvider.CONTENT_URI, null, MoviesContract.UID + "=?", new String[]{movieId}, null);
+            if (cursor != null) {
+                if (!cursor.moveToFirst()) {
+                    movieExists = false;
+                } else {
+                    // Movie exists, populating movie values
+                    movieExists = true;
+                    // Set movie isFavorite
+                    movieIsFavorite = cursor.getInt(cursor.getColumnIndex(MoviesContract.FAVORITES));
+                    // Set movie poster
+                    moviePoster = moviePoster + cursor.getString(cursor.getColumnIndex(MoviesContract.POSTER_PATH));
+                    // Set movieTitle
+                    movieTitle = cursor.getString(cursor.getColumnIndex(MoviesContract.MOVIE_TITLE));
+                    // Set release date
+                    releaseDate = cursor.getString(cursor.getColumnIndex(MoviesContract.RELEASE_DATE));
+                    // Set rating
+                    rating = cursor.getString(cursor.getColumnIndex(MoviesContract.VOTE_AVERAGE)) + rating;
+                    // Set synopsis
+                    synopsis = cursor.getString(cursor.getColumnIndex(MoviesContract.SYNOPSIS));
+                    // Set trailer
+                    trailer = cursor.getString(cursor.getColumnIndex(MoviesContract.TRAILER));
+                }
             }
         } catch (NullPointerException exc) {
             Log.e(MovieObject.class.getSimpleName(), "Cursor could not read database");
@@ -84,5 +89,9 @@ public class MovieObject {
 
     public String getSynopsis() {
         return synopsis;
+    }
+
+    public String getTrailer() {
+        return trailer;
     }
 }

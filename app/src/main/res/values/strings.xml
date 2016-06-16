@@ -5,4 +5,7 @@
     <string name="settings">Settings</string>
     <string name="top_rated">Top Rated</string>
     <string name="pop_rated">Popular</string>
+
+    <!-- Resources for XML Strings -->
+    <string name="single_gridview_description">Used for MovieAdapter as a template for new views</string>
 </resources>

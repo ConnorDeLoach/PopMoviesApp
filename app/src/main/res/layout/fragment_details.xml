@@ -61,6 +61,12 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/details_synopsis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textColor="@color/colorPrimaryText" />
 
         <View
             android:layout_width="match_parent"
@@ -69,13 +75,19 @@
             android:layout_marginRight="16dp"
             android:background="@color/colorPrimaryDark" />
 
-
-        <TextView
-            android:id="@+id/details_synopsis"
+        <Button
+            android:id="@+id/trailer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textColor="@color/colorPrimaryText" />
+            android:background="@drawable/ic_favorite_white_24dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/trailer_button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_favorite_white_24dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

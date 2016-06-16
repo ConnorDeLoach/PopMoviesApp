@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,16 +16,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieObject;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieProvider;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MoviesContract;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
 
 /**
  * Manages communication between moviesDB and internal app sqlite database
  */
 public class MyAsyncTask extends AsyncTask<String, Void, String> {
 
-    public static String jsonStr;
     // JSON Keys
     final String API_KEY = "api_key";
     final String RESULTS = "results";
@@ -36,10 +37,12 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
     final String MOVIE_RATING = "vote_average";
     final String MOVIE_SYNOPSIS = "overview";
     String movieType = "";
-    private Context context;
+    private AsyncCallback mListener;
+    private Context mContext;
 
-    MyAsyncTask(Context context) {
-        this.context = context;
+    public MyAsyncTask(Context context, AsyncCallback mListener) {
+        mContext = context;
+        this.mListener = mListener;
     }
 
     @Override
@@ -71,6 +74,7 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
         // Variable declarations outside try block in order to close in Final block
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
+        String jsonStr;
         try {
             // Create a URL from the built Uri string above and open a connection to MoviesDB
             URL url = new URL(builtUri.toString());
@@ -137,7 +141,7 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
                 currentMovies[i] = movie.getString(MOVIE_ID);
 
                 // Check if movie exists in database
-                MovieObject movieObject = new MovieObject(context, movie.getString(MOVIE_ID));
+                MovieObject movieObject = new MovieObject(mContext, movie.getString(MOVIE_ID));
                 if (!movieObject.isMovieExists()) {
 
                     // Put values into ContentValues
@@ -145,48 +149,23 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
                     contentValues.put(MoviesContract.UID, movie.getString(MOVIE_ID));
                     contentValues.put(MoviesContract.POSTER_PATH, movie.getString(MOVIE_POSTER));
                     contentValues.put(MoviesContract.MOVIE_TITLE, movie.getString(MOVIE_TITLE));
-                    contentValues.put(MoviesContract.RELEASE_DATE, getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
+                    contentValues.put(MoviesContract.RELEASE_DATE, StringUtils.getEasyDate(movie.getString(MOVIE_RELEASE_DATE)));
                     contentValues.put(MoviesContract.VOTE_AVERAGE, movie.getString(MOVIE_RATING));
                     contentValues.put(MoviesContract.SYNOPSIS, movie.getString(MOVIE_SYNOPSIS));
                     contentValues.put(MoviesContract.TYPE, movieType);
 
                     // Insert into database
-                    context.getContentResolver().insert(MovieProvider.CONTENT_URI, contentValues);
+                    mContext.getContentResolver().insert(MovieProvider.CONTENT_URI, contentValues);
                 }
             }
+            // Launch callback for Trailers and Reviews AsyncTasks
+            mListener.callback(currentMovies);
+
             // Delete old movies
-            String whereArgs = SQLiteDeleteString(currentMovies);
-            context.getContentResolver().delete(MovieProvider.CONTENT_URI, MoviesContract.UID + " NOT IN (" + whereArgs, null);
+            String idArgs = StringUtils.SQLiteWhereArgs(currentMovies);
+            mContext.getContentResolver().delete(MovieProvider.CONTENT_URI, MoviesContract.UID + " NOT IN (" + idArgs + ") AND " + MoviesContract.TYPE + " =\'" + movieType + "\'", null);
         } catch (JSONException exc) {
             Log.e(MyAsyncTask.class.toString(), "Failed to insert data into database");
-            }
-    }
-
-    /**
-     * Parse and return a formatted movie release date
-     *
-     * @param date from moviesdb json
-     * @return formatted date for sqlite database
-     */
-    private String getEasyDate(String date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.US);
-        try {
-            date = formatter.format(formatter.parse(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
-        return date;
-    }
-
-    private String SQLiteDeleteString(String[] currentMovies) {
-        String args = "";
-        for (int i = 0; i < currentMovies.length; i++) {
-            if (i == currentMovies.length - 1) {
-                args = args + currentMovies[i];
-            } else {
-                args = args + currentMovies[i] + ", ";
-            }
-        }
-        return args + ") AND " + MoviesContract.TYPE + " =\'" + movieType + "\'";
     }
 }
