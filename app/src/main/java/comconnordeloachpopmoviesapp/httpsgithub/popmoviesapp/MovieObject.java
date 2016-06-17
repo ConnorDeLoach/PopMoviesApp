@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+
 /**
  * Class to build an object containing all information for a movie
  */
@@ -19,6 +22,7 @@ public class MovieObject {
     private String rating = "/10";
     private String synopsis;
     private String trailer;
+    private String reviews;
 
     public MovieObject(Context context, String movieId) {
 
@@ -48,6 +52,8 @@ public class MovieObject {
                     synopsis = cursor.getString(cursor.getColumnIndex(MoviesContract.SYNOPSIS));
                     // Set trailer
                     trailer = cursor.getString(cursor.getColumnIndex(MoviesContract.TRAILER));
+                    // Set reviews
+                    reviews = cursor.getString(cursor.getColumnIndex(MoviesContract.REVIEWS));
                 }
             }
         } catch (NullPointerException exc) {
@@ -93,5 +99,9 @@ public class MovieObject {
 
     public String getTrailer() {
         return trailer;
+    }
+
+    public String getReviews() {
+        return reviews;
     }
 }

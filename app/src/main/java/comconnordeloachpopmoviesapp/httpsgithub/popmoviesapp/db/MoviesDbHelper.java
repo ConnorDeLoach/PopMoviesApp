@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -12,7 +12,7 @@ import android.util.Log;
 public class MoviesDbHelper extends SQLiteOpenHelper {
 
     // Database declaration
-    static final int DATABASE_VERSION = 24;
+    static final int DATABASE_VERSION = 26;
     static final String DATABASE_NAME = "PopMoviesAppDB";
 
     public MoviesDbHelper(Context context) {

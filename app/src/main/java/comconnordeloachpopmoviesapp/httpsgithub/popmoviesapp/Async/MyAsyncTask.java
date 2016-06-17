@@ -18,9 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieObject;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieProvider;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MoviesContract;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 
 /**
  * Manages communication between moviesDB and internal app sqlite database

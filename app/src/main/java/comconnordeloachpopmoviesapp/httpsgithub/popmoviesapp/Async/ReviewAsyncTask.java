@@ -21,14 +21,14 @@ import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 
 /**
- * Query moviesdb for movie trailer URL
+ * Query moviesdb for movie reviews URL
  */
-public class TrailerAsyncTask extends AsyncTask<String, Void, String> {
+public class ReviewAsyncTask extends AsyncTask<String, Void, String> {
 
     private Context mContext;
     private String mMovieId;
 
-    public TrailerAsyncTask(Context context) {
+    public ReviewAsyncTask(Context context) {
         mContext = context;
     }
 
@@ -43,7 +43,7 @@ public class TrailerAsyncTask extends AsyncTask<String, Void, String> {
                 .appendPath("3")
                 .appendPath("movie")
                 .appendPath(mMovieId)
-                .appendPath("videos")
+                .appendPath("reviews")
                 .appendQueryParameter("api_key", "YOUR_API_KEY");
         String myUrl = builder.build().toString();
 
@@ -100,40 +100,33 @@ public class TrailerAsyncTask extends AsyncTask<String, Void, String> {
             Log.e(MyAsyncTask.class.toString(), "AsyncTask failed to retrieve data");
             return;
         }
-        // Uri to append trailer Ids to
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("https")
-                .authority("www.youtube.com")
-                .appendPath("watch");
 
-        // Get trailer(s) key from json
-        String trailers = "";
+        // Get review(s) from json
+        String reviews = "";
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             JSONArray resultsArray = jsonObject.getJSONArray("results");
             for (int i = 0; i < resultsArray.length(); i++) {
-                JSONObject trailerJson = resultsArray.getJSONObject(i);
-                // Only trailers from youtube
-                if (trailerJson.getString("site").equals("YouTube")) {
-                    // demarcate trailers with ","
-                    if (trailerJson.getString("type").equals("Trailer")) {
-                        trailers = trailers + builder.appendQueryParameter("v", trailerJson.getString("key")) + ",";
-                        builder.clearQuery();
-                    }
+                JSONObject reviewsJson = resultsArray.getJSONObject(i);
+                // demarcate reviews with "connordeloach.popMoviesApp"
+                if (reviewsJson.length() != 0) {
+                    String author = reviewsJson.getString("author");
+                    String review = reviewsJson.getString("content");
+                    reviews = reviews + author + ": " + review + "connordeloach.popMoviesApp";
                 } else {
-                    // no trailers so return nothing
+                    // no reviews so return nothing
                     return;
                 }
             }
 
             // Truncate last comma
-            if (trailers.length() >= 1) {
-                trailers = trailers.substring(0, trailers.length() - 1);
+            if (reviews.length() >= 1) {
+                reviews = reviews.substring(0, reviews.length() - 26);
             }
 
             // Put trailer into database
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MoviesContract.TRAILER, trailers);
+            contentValues.put(MoviesContract.REVIEWS, reviews);
             mContext.getContentResolver().update(MovieProvider.CONTENT_URI, contentValues, MoviesContract.UID + "=?", new String[]{mMovieId});
         } catch (JSONException exc) {
             Log.e(MyAsyncTask.class.toString(), "Failed to insert data into database");

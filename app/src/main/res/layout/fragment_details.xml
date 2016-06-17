@@ -89,5 +89,20 @@
             android:background="@drawable/ic_favorite_white_24dp"
             android:visibility="gone" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/reviews_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textColor="@color/colorPrimaryText"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

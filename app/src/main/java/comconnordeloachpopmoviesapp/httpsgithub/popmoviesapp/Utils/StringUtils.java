@@ -38,4 +38,18 @@ public class StringUtils {
         }
         return date;
     }
+
+    public static String getReviewFormat(String[] reviews) {
+        String formattedReview = "";
+        for (String string : reviews) {
+            String author = string.substring(0, string.indexOf(":") + 1);
+            String review = string.substring(string.indexOf(":") + 1, string.length());
+
+            formattedReview += author + "\t" + review + "\n\n";
+        }
+        // Truncate last \n
+        formattedReview = formattedReview.substring(0, formattedReview.length() - 2);
+
+        return formattedReview;
+    }
 }

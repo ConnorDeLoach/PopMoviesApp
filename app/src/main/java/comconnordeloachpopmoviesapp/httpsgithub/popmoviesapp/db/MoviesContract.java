@@ -1,10 +1,11 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db;
 
 /**
  * Class to control database and provider scheme
  */
 public class MoviesContract {
     // Column names
+    public static final String TABLE_MOVIES = "movies";
     public static final String UID = "_id";
     public static final String FAVORITES = "favorites";
     public static final String POSTER_PATH = "poster_path";
@@ -14,7 +15,8 @@ public class MoviesContract {
     public static final String SYNOPSIS = "synopsis";
     public static final String TYPE = "type";
     public static final String TRAILER = "trailer";
-    static final String TABLE_MOVIES = "movies";
+    public static final String REVIEWS = "reviews";
+
     // SQLite methods
     static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_MOVIES;
     static final String CREATE_TABLE = "CREATE TABLE " + TABLE_MOVIES + " (" + UID + " INTEGER PRIMARY KEY NOT NULL, "
@@ -25,5 +27,6 @@ public class MoviesContract {
             + VOTE_AVERAGE + " TEXT, "
             + SYNOPSIS + " TEXT, "
             + TYPE + " TEXT, "
-            + TRAILER + " TEXT NOT NULL DEFAULT '');";
+            + TRAILER + " TEXT NOT NULL DEFAULT '', "
+            + REVIEWS + " TEXT NOT NULL DEFAULT '');";
 }

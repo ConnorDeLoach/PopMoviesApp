@@ -21,6 +21,9 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+
 /**
  * Contains the gridview of movieposter views. Each clickable to start a details view.
  */

@@ -20,6 +20,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+
 /**
  * Contains the view for each movie
  */
@@ -85,6 +89,18 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
                     }
                 });
             }
+        }
+
+        // Attach reviews
+        if (!movieObject.getReviews().equals("")) {
+            // Format the string
+            String[] split = movieObject.getReviews().split("connordeloach.popMoviesApp");
+            String reviews = StringUtils.getReviewFormat(split);
+
+            // Attach formatted review to TextView
+            TextView reviewsTextview = (TextView) root.findViewById(R.id.reviews_textView);
+            reviewsTextview.setVisibility(View.VISIBLE);
+            reviewsTextview.setText(reviews);
         }
 
         // Create toolbar

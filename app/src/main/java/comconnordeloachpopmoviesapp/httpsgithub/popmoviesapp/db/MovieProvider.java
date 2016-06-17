@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

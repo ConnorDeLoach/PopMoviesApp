@@ -22,7 +22,7 @@
         </activity>
 
         <provider
-            android:name=".MovieProvider"
+            android:name=".db.MovieProvider"
             android:authorities="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp" />
     </application>
 
