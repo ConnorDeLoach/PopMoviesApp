@@ -8,4 +8,9 @@
         android:title="@string/settings"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_favorites"
+        android:title="@string/favorites"
+        app:showAsAction="never" />
+
 </menu>

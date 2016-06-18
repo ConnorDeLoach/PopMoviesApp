@@ -8,7 +8,7 @@
         layout="@layout/mainfragment_toolbar" />
 
     <GridView
-        android:id="@+id/mainfragment_gridview"
+        android:id="@+id/favorites_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_bar"

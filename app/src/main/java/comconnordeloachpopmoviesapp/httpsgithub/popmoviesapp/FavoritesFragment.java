@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -18,65 +17,42 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 
 /**
- * Contains the gridview of movieposter views. Each clickable to start a details view.
+ * Hold view for favorites
  */
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final int MOVIE_LOADER = 0;
-    // MainFragment variables
-    private MovieAdapter mMovieAdapter;
-    private String movieType = "popular";
+public class FavoritesFragment extends android.support.v4.app.Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int MOVIE_LOADER = 1;
+    // member variables
+    private MovieAdapter mFavoritesAdapter;
 
     // This line makes it so this fragment can handle menu events.
-    public MainFragment() {
+    public FavoritesFragment() {
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_main_layout, container, false);
+        View root = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        // Attach mMovieAdapter to GridView
-        mMovieAdapter = new MovieAdapter(getContext(), null, 0);
-        GridView gridView = (GridView) root.findViewById(R.id.mainfragment_gridview);
-        gridView.setAdapter(mMovieAdapter);
+        // Attach mFavoritesAdapter to GridView
+        mFavoritesAdapter = new MovieAdapter(getContext(), null, 0);
+        GridView gridView = (GridView) root.findViewById(R.id.favorites_gridview);
+        gridView.setAdapter(mFavoritesAdapter);
+
+        // Create loader
+        getLoaderManager().initLoader(MOVIE_LOADER, null, FavoritesFragment.this);
 
         //Create toolbar
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.app_bar);
+        toolbar.findViewById(R.id.spinner_menu).setVisibility(View.GONE);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        // Create Spinner actions: sort by popular, or by top rated
-        Spinner spinner = (Spinner) root.findViewById(R.id.spinner_menu);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        if (!movieType.equals("popular")) {
-                            movieType = "popular";
-                            getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
-                        }
-                        break;
-                    case 1:
-                        if (!movieType.equals("top_rated")) {
-                            movieType = "top_rated";
-                            getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        // Enable home navigation button
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set onClickListener to launch details fragment when a movie poster is touched
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,39 +93,38 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_favorites:
-                Intent intent = new Intent(getActivity(), FavoritesActivity.class);
-                startActivity(intent);
+                mFavoritesAdapter.notifyDataSetChanged();
         }
         return super.onOptionsItemSelected(item);
     }
 
     /**
      * Passes movieId from a touched view in GridView into an intent for DetailsFragment
+     *
      * @param position of each view in gridview
      * @return String with movie ID
      */
     private String setDetailsActivity(int position) {
         // Get poster path from the clicked view
-        Cursor cursor = mMovieAdapter.getCursor();
+        Cursor cursor = mFavoritesAdapter.getCursor();
         cursor.moveToPosition(position);
         return cursor.getString(0);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID, MoviesContract.POSTER_PATH}, MoviesContract.TYPE + "=?", new String[]{movieType}, null);
-
+        return new CursorLoader(getActivity(), MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID, MoviesContract.POSTER_PATH}, MoviesContract.FAVORITES + "=?", new String[]{"1"}, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Swap the cursor in, framework will close the old cursor once the new data is in MovieAdapter.
-        mMovieAdapter.swapCursor(data);
+        mFavoritesAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // Swap the cursor with null to make sure we are no longer using it before the cursor is closed.
-        mMovieAdapter.swapCursor(null);
+        mFavoritesAdapter.swapCursor(null);
     }
 }
