@@ -1,6 +1,8 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,11 +33,19 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int MOVIE_LOADER = 0;
     // MainFragment variables
     private MovieAdapter mMovieAdapter;
-    private String movieType = "popular";
+    private String mMovieType = "popular";
+    private SharedPreferences mPrefs;
 
     // This line makes it so this fragment can handle menu events.
     public MainFragment() {
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        mPrefs = getActivity().getSharedPreferences("myData", Context.MODE_PRIVATE);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -52,20 +62,24 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         // Create Spinner actions: sort by popular, or by top rated
+        // Recover spinner state
         Spinner spinner = (Spinner) root.findViewById(R.id.spinner_menu);
+        if (mPrefs.getString("spinner_state", "popular").equals("top_rated")) {
+            spinner.setSelection(1);
+        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        if (!movieType.equals("popular")) {
-                            movieType = "popular";
+                        if (!mMovieType.equals("popular")) {
+                            mMovieType = "popular";
                             getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
                         }
                         break;
                     case 1:
-                        if (!movieType.equals("top_rated")) {
-                            movieType = "top_rated";
+                        if (!mMovieType.equals("top_rated")) {
+                            mMovieType = "top_rated";
                             getLoaderManager().restartLoader(MOVIE_LOADER, null, MainFragment.this);
                         }
                         break;
@@ -95,12 +109,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu, menu);
@@ -123,6 +131,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Store spinner state in shared preferences
+        mPrefs.edit().putString("spinner_state", mMovieType).apply();
+    }
+
     /**
      * Passes movieId from a touched view in GridView into an intent for DetailsFragment
      * @param position of each view in gridview
@@ -137,7 +152,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID, MoviesContract.POSTER_PATH}, MoviesContract.TYPE + "=?", new String[]{movieType}, null);
+        return new CursorLoader(getActivity(), MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID, MoviesContract.POSTER_PATH}, MoviesContract.TYPE + "=?", new String[]{mMovieType}, null);
 
     }
 
