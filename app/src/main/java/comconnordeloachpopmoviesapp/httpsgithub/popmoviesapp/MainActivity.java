@@ -19,9 +19,11 @@ import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 public class MainActivity extends AppCompatActivity {
 
     private final String MAINFRAGMENTTAG = MainFragment.class.toString();
+    private final String DETAILFRAGMENT_TAG = DetailsFragment.class.toString();
     private final int UID = 0;
     private final int TRAILER = 1;
     private final int REVIEWS = 2;
+    private boolean mTwoPane;
     private Context mContext = this;
 
     @Override
@@ -89,14 +91,24 @@ public class MainActivity extends AppCompatActivity {
         });
         topAsyncTask.execute("top_rated");
 
-        // Create Fragment manager begin a transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        // Check for 2Pane state
+        if (findViewById(R.id.detail_container) != null) {
+            Log.i("DEBUG", "past first if");
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_container, new MainFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            // Create Fragment manager begin a transaction
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        // Instantiate MainFragment and attach it to activity_main layout
-        MainFragment mainFragment = new MainFragment();
-        fragmentTransaction.add(R.id.fragment_container, mainFragment, MAINFRAGMENTTAG);
-        fragmentTransaction.commit();
-
+            // Instantiate MainFragment and attach it to activity_main layout
+            MainFragment mainFragment = new MainFragment();
+            fragmentTransaction.add(R.id.fragment_container, mainFragment, MAINFRAGMENTTAG);
+            fragmentTransaction.commit();
+        }
     }
 }
