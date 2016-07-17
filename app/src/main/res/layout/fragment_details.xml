@@ -79,14 +79,16 @@
             android:id="@+id/trailer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_favorite_white_24dp"
+            android:drawableLeft="@drawable/ic_theaters_black_24dp"
+            android:text="@string/trailer1"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/trailer_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_favorite_white_24dp"
+            android:drawableLeft="@drawable/ic_theaters_black_24dp"
+            android:text="@string/trailer2"
             android:visibility="gone" />
 
         <View

@@ -28,6 +28,8 @@ import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
  * Contains the view for each movie
  */
 public class DetailsFragment extends android.support.v4.app.Fragment {
+    // Member variables
+    private String mMovieId;
 
     public DetailsFragment() {
         setHasOptionsMenu(true);
@@ -42,9 +44,14 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_details, container, false);
 
-        // Retrieve movie object
-        final String movieId = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        final MovieObject movieObject = new MovieObject(getActivity(), movieId);
+        // Retrieve movieId
+        // Check if movieId is passed via intent or bundle
+        if (getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT) == null) {
+            mMovieId = getArguments().getString("movieid");
+        } else {
+            mMovieId = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        }
+        final MovieObject movieObject = new MovieObject(getActivity(), mMovieId);
 
         // Attach title
         TextView textView = (TextView) root.findViewById(R.id.details_test_textview);
@@ -117,6 +124,7 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         }
 
         // update favorite change in database
+        final String movieId = mMovieId;
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

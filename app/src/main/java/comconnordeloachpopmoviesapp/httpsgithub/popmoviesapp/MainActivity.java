@@ -1,10 +1,9 @@
 package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -16,7 +15,7 @@ import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnMovieSelectedListener {
 
     private final String MAINFRAGMENTTAG = MainFragment.class.toString();
     private final String DETAILFRAGMENT_TAG = DetailsFragment.class.toString();
@@ -92,23 +91,62 @@ public class MainActivity extends AppCompatActivity {
         topAsyncTask.execute("top_rated");
 
         // Check for 2Pane state
+        // if 2pane state, dynamically initialize details fragment
         if (findViewById(R.id.detail_container) != null) {
-            Log.i("DEBUG", "past first if");
             mTwoPane = true;
             if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_container, new MainFragment(), DETAILFRAGMENT_TAG)
-                        .commit();
+                // Create Details Fragment and attach movieId argument(s)
+                // Get movieId
+                Cursor cursor = getContentResolver().query(MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID}, null, null, null);
+                String movieId = null;
+                try {
+                    cursor.moveToFirst();
+                    movieId = cursor.getString(0);
+                } catch (NullPointerException exc) {
+                    Log.e(this.getClass().getSimpleName(), "TwoPane DetailsFragment failed to retrieve movieId");
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                }
+                if (movieId == null) {
+                    // passing a null value will crash the app
+                    // run app in 1-pane mode instead
+                    mTwoPane = false;
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("movieid", movieId);
+
+                    // Put bundle with movieId into DetailFragment object
+                    DetailsFragment df = new DetailsFragment();
+                    df.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.detail_container, df, DETAILFRAGMENT_TAG)
+                            .commit();
+                }
             }
         } else {
-            // Create Fragment manager begin a transaction
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            mTwoPane = false;
+        }
+    }
 
-            // Instantiate MainFragment and attach it to activity_main layout
-            MainFragment mainFragment = new MainFragment();
-            fragmentTransaction.add(R.id.fragment_container, mainFragment, MAINFRAGMENTTAG);
-            fragmentTransaction.commit();
+    @Override
+    public void OnMovieSelected(String movieId) {
+        if (mTwoPane) {
+            Bundle bundle = new Bundle();
+            bundle.putString("movieid", movieId);
+
+            // Put bundle with movieId into DetailFragment object
+            DetailsFragment df = new DetailsFragment();
+            df.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_container, df, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            // Get movieId to pass to details fragment via DetailsActivity
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra(Intent.EXTRA_TEXT, movieId);
+            startActivity(intent);
         }
     }
 }

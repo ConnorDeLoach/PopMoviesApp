@@ -32,6 +32,7 @@ import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int MOVIE_LOADER = 0;
     // MainFragment variables
+    private OnMovieSelectedListener mOnMovieSelectedListener;
     private MovieAdapter mMovieAdapter;
     private String mMovieType = "popular";
     private SharedPreferences mPrefs;
@@ -39,6 +40,16 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     // This line makes it so this fragment can handle menu events.
     public MainFragment() {
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mOnMovieSelectedListener = (OnMovieSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement OnMovieSelectedListener interface.");
+        }
     }
 
     @Override
@@ -98,10 +109,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String movieId = setDetailsActivity(position);
 
-                // Get movieId to pass to details fragment
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, movieId);
-                startActivity(intent);
+                // use OnMovieSelectedListener callback to let MainActivity handle communication between fragments/activities
+                mOnMovieSelectedListener.OnMovieSelected(movieId);
             }
         });
 
@@ -166,5 +175,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoaderReset(Loader<Cursor> loader) {
         // Swap the cursor with null to make sure we are no longer using it before the cursor is closed.
         mMovieAdapter.swapCursor(null);
+    }
+
+    // Container Activity must implement this interface
+    public interface OnMovieSelectedListener {
+        void OnMovieSelected(String movieId);
     }
 }

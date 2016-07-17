@@ -9,4 +9,6 @@
 
     <!-- Resources for XML Strings -->
     <string name="single_gridview_description">Used for MovieAdapter as a template for new views</string>
+    <string name="trailer1">Trailer 1</string>
+    <string name="trailer2">Trailer 2</string>
 </resources>
