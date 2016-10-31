@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,13 +7,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async.AsyncCallback;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async.MyAsyncTask;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async.ReviewAsyncTask;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async.TrailerAsyncTask;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.R;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async.AsyncCallback;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async.MyAsyncTask;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async.ReviewAsyncTask;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async.TrailerAsyncTask;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.fragment.DetailsFragment;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.fragment.MainFragment;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.utils.StringUtils;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMovieSelectedListener {
 
@@ -100,8 +103,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMo
                 Cursor cursor = getContentResolver().query(MovieProvider.CONTENT_URI, new String[]{MoviesContract.UID}, null, null, null);
                 String movieId = null;
                 try {
-                    cursor.moveToFirst();
-                    movieId = cursor.getString(0);
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        movieId = cursor.getString(0);
+                    }
+                    // else the app is started for the first time and cursor is empty
                 } catch (NullPointerException exc) {
                     Log.e(this.getClass().getSimpleName(), "TwoPane DetailsFragment failed to retrieve movieId");
                 } finally {
@@ -109,11 +115,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMo
                         cursor.close();
                     }
                 }
-                if (movieId == null) {
-                    // passing a null value will crash the app
-                    // run app in 1-pane mode instead
-                    mTwoPane = false;
-                } else {
+                if (movieId != null) {
                     Bundle bundle = new Bundle();
                     bundle.putString("movieid", movieId);
 
@@ -123,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMo
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.detail_container, df, DETAILFRAGMENT_TAG)
                             .commit();
+                } else {
+                    // TODO: create temporary fragment to load in case this ever happens
+                    mTwoPane = false;
                 }
             }
         } else {

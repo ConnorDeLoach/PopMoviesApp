@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,9 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieObject;
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.utils.StringUtils;
 
 /**
  * Manages communication between moviesDB and internal app sqlite database
@@ -68,7 +68,7 @@ public class MyAsyncTask extends AsyncTask<String, Void, String> {
         }
 
         Uri builtUri = Uri.parse(params[0]).buildUpon()
-                .appendQueryParameter(APPID_PARAM, "YOUR_API_KEY")
+                .appendQueryParameter(APPID_PARAM, "c9ec149289f0e4b1e1cae1a92af5eb5f")
                 .build();
 
         // Variable declarations outside try block in order to close in Final block

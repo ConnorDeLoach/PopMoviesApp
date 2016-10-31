@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +9,8 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.R;
 
 /**
  * Cursor Adapter used in MainFragment to attach to GridView

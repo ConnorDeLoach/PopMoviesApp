@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.fragment;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -16,13 +16,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils.StringUtils;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MovieObject;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.R;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.utils.StringUtils;
 
 /**
  * Contains the view for each movie
@@ -158,7 +159,6 @@ public class DetailsFragment extends android.support.v4.app.Fragment {
         //Setup action logic
         switch (itemId) {
             case R.id.action_settings:
-                Toast.makeText(getActivity(), "Hello from toast", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

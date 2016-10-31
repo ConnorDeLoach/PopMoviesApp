@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -44,7 +44,7 @@ public class TrailerAsyncTask extends AsyncTask<String, Void, String> {
                 .appendPath("movie")
                 .appendPath(mMovieId)
                 .appendPath("videos")
-                .appendQueryParameter("api_key", "YOUR_API_KEY");
+                .appendQueryParameter("api_key", "c9ec149289f0e4b1e1cae1a92af5eb5f");
         String myUrl = builder.build().toString();
 
         // Variable declarations outside try block in order to close in Final block

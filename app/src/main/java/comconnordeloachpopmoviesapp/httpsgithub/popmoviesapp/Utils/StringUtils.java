@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Utils;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,7 +7,10 @@ import java.util.Locale;
 /**
  * Utility class for parsing and formatting Strings
  */
-public class StringUtils {
+public final class StringUtils {
+
+    private StringUtils() {
+    }
 
     /**
      * Format String array in proper SQLite 'WHERE = ?' syntax

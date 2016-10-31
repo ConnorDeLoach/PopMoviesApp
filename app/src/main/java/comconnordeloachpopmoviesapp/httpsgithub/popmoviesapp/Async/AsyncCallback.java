@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.Async;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async;
 
 /**
  * After movie database is updated, callback to initiate Trailer and Review AsyncTasks

@@ -1,4 +1,4 @@
-package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp;
+package comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +19,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.R;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.activity.DetailsActivity;
+import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.async.MovieAdapter;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MovieProvider;
 import comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.db.MoviesContract;
 

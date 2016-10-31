@@ -5,11 +5,11 @@
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
-    tools:context="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MainActivity">
+    tools:context="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.activity.MainActivity">
 
     <fragment
         android:id="@+id/fragment_main"
-        android:name="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.MainFragment"
+        android:name="comconnordeloachpopmoviesapp.httpsgithub.popmoviesapp.fragment.MainFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
